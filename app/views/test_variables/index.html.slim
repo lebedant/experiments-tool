@@ -1,0 +1,29 @@
+h1 Listing test_variables
+
+table
+  thead
+    tr
+      th Type
+      th Name
+      th Visualization method
+      th Space
+      th Log transform
+      th
+      th
+      th
+
+  tbody
+    - @test_variables.each do |test_variable|
+      tr
+        td = test_variable.type
+        td = test_variable.name
+        td = test_variable.visualization_method
+        td = test_variable.space
+        td = test_variable.log_transform
+        td = link_to 'Show', test_variable
+        td = link_to 'Edit', edit_test_variable_path(test_variable)
+        td = link_to 'Destroy', test_variable, data: { confirm: 'Are you sure?' }, method: :delete
+
+br
+
+= link_to 'New Test variable', new_test_variable_path

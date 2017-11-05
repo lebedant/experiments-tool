@@ -1,0 +1,63 @@
+// Place all the styles related to the TestParts controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+
+.nested-fields {
+    padding: 15px;
+    border-radius: 10px;
+    position: relative;
+}
+
+.nested-fields.part {
+    background: #ededed;
+}
+
+.nested-fields.variable {
+    background: #cecece;
+}
+
+.variable, .part {
+  margin-bottom: 15px;
+}
+
+.add_fields,
+.remove_fields {
+    text-decoration: none;
+}
+
+.add_fields {
+    padding: 5px;
+    border: 1px solid #1EAEDB;
+    background: white;
+}
+
+.add_fields:hover {    
+    background: #eee;
+}
+
+
+.remove_fields {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+}
+
+h4.title {
+    text-decoration: underline;
+    font-size: 2.5rem;
+    margin: 20px 0px;
+    color: #797979;
+}
+
+#test_variables {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.part textarea {
+    height: 120px;
+}

@@ -1,0 +1,31 @@
+= form_for @test do |f|
+  - if @test.errors.any?
+    #error_explanation
+      p = "#{pluralize(@test.errors.count, "error")} prohibited this test from being saved:"
+      ul.errors
+        - @test.errors.full_messages.each do |message|
+          li = message
+
+  .row
+    .four.columns
+      .field
+        = f.label :name
+        = f.text_field :name, class: 'u-full-width'
+    .eight.columns
+      .field
+        = f.label :description
+        = f.text_area :description, class: 'u-full-width'
+
+  hr
+
+  h4 Test parts
+  #test_parts
+    = f.fields_for :test_parts do |part|
+      = render 'test_parts_fields', f: part
+    .links
+      = link_to_add_association(f, :test_parts) do
+        | add part 
+
+  hr
+  .actions 
+    = f.submit class: 'button-primary'

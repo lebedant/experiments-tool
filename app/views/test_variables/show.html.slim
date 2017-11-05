@@ -1,0 +1,21 @@
+p#notice = notice
+
+p
+  strong Type:
+  = @test_variable.type
+p
+  strong Name:
+  = @test_variable.name
+p
+  strong Visualization method:
+  = @test_variable.visualization_method
+p
+  strong Space:
+  = @test_variable.space
+p
+  strong Log transform:
+  = @test_variable.log_transform
+
+= link_to 'Edit', edit_test_variable_path(@test_variable)
+'  |
+= link_to 'Back', test_variables_path

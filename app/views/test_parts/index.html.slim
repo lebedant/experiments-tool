@@ -1,0 +1,25 @@
+h1 Listing test_parts
+
+table
+  thead
+    tr
+      th Name
+      th Description
+      th Design type
+      th
+      th
+      th
+
+  tbody
+    - @test_parts.each do |test_part|
+      tr
+        td = test_part.name
+        td = test_part.description
+        td = test_part.design_type
+        td = link_to 'Show', test_part
+        td = link_to 'Edit', edit_test_part_path(test_part)
+        td = link_to 'Destroy', test_part, data: { confirm: 'Are you sure?' }, method: :delete
+
+br
+
+= link_to 'New Test part', new_test_part_path

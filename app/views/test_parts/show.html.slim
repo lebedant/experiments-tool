@@ -1,0 +1,15 @@
+p#notice = notice
+
+p
+  strong Name:
+  = @test_part.name
+p
+  strong Description:
+  = @test_part.description
+p
+  strong Design type:
+  = @test_part.design_type
+
+= link_to 'Edit', edit_test_part_path(@test_part)
+'  |
+= link_to 'Back', test_parts_path

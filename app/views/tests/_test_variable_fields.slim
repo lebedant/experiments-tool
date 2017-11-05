@@ -1,0 +1,12 @@
+.nested-fields.variable
+  .field
+    = f.label :data_type
+    = f.select :data_type, options_for_select(data_type_options),{}, {class: 'u-full-width'} 
+  .field
+    = f.label :variable_name
+    = f.text_field :name
+  .field
+    = f.check_box :log_transform
+    = f.label :log_transform    
+  = link_to_remove_association(f) do
+    == material_icon.cancel.md_24 

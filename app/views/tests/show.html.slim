@@ -1,0 +1,12 @@
+p#notice = notice
+
+p
+  strong Name:
+  = @test.name
+p
+  strong Description:
+  = @test.description
+
+= link_to 'Edit', edit_test_path(@test)
+'  |
+= link_to 'Back', tests_path

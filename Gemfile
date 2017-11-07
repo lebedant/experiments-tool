@@ -50,6 +50,11 @@ gem 'material_icons'
 
 gem 'skeleton-rails'
 # , :git => 'https://github.com/helios-technologies/skeleton-rails'
+gem 'toastr-rails'
+
+gem "breadcrumbs_on_rails"
+
+gem 'simple_token_authentication', '~> 1.0'
 
 gem "cocoon"
 

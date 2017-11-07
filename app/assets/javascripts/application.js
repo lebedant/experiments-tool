@@ -16,4 +16,23 @@
 //= require jquery
 //= require jquery_ujs
 //= require cocoon
+//= require toastr
 
+/* Global toastr options */
+toastr.options = {
+  "closeButton": true,
+  "debug": true,
+  "newestOnTop": false,
+  "progressBar": false,
+  "preventDuplicates": true,
+  // "positionClass": "toast-top-full-width",
+  "onclick": null,
+  "showDuration": "2000",
+  "hideDuration": "3000",
+  "timeOut": "5000",
+  "extendedTimeOut": "1000",
+  "showEasing": "linear",
+  "hideEasing": "linear",
+  "showMethod": "fadeIn",
+  "hideMethod": "fadeOut"
+}

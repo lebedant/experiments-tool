@@ -1,12 +1,13 @@
-p#notice = notice
 
-p
-  strong Name:
-  = @test.name
-p
-  strong Description:
+.absolute-right
+  = link_to material_icon.edit.md_24, edit_test_path(@test)
+  = link_to material_icon.delete.md_24, @test, data: { confirm: 'Are you sure?' }, method: :delete
+
+p.small
   = @test.description
 
-= link_to 'Edit', edit_test_path(@test)
-'  |
-= link_to 'Back', tests_path
+
+hr
+p Graphs
+
+

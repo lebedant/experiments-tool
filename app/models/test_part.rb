@@ -9,4 +9,6 @@ class TestPart < ApplicationRecord
         within_subject: 0,
         between_subject: 1
     }
+
+    validates_presence_of :name, :test_variables
 end

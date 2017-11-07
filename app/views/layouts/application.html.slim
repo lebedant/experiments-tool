@@ -18,4 +18,7 @@ html
             = link_to 'Sign up', new_user_registration_path, class: 'button button-primary'
             = link_to 'Login', new_user_session_path, class: 'button'
 
-      = yield
+      #content
+        = custom_bootstrap_flash
+        h4 = render_breadcrumbs :separator => ' / '
+        = yield

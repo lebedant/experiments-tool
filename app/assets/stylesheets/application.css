@@ -15,6 +15,7 @@
  *= require normalize
  *= require skeleton
  *= require material_icons
+ *= require toastr
  */
 
 
@@ -49,7 +50,7 @@ ul.errors li {
     background: #ffcfcf;
     padding: 5px 10px;
 }
- 
+
 input[type="checkbox"] ~ label {
     display: inline-block;
 }
@@ -57,3 +58,50 @@ input[type="checkbox"] ~ label {
 input[type="checkbox"] {
     margin-right: 5px;
 }
+
+.no-content {
+    padding: 10px 8px;
+    background: #fff2d3;
+    text-align: center;
+}
+
+.small {
+    color: gray;
+    font-size: 90%;
+}
+
+.flex-row {
+    display: flex;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -moz-flex;
+    display: -webkit-flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    -webkit-flex-wrap: wrap;
+    align-items: baseline;
+}
+
+.flex-row > * + * {
+    margin-left: 10px;
+}
+
+#content {
+    position: relative;
+}
+
+.absolute-right {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.absolute-right > * + * {
+    margin-left: 10px;
+}
+
+
+
+

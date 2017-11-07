@@ -1,23 +1,22 @@
-h1 Listing tests
+.absolute-right
+  = link_to 'New Test', new_test_path, class: 'button button-primary'
 
-table
-  thead
-    tr
-      th Name
-      th Description
-      th
-      th
-      th
-
-  tbody
-    - @tests.each do |test|
-      tr
-        td = test.name
-        td = test.description
-        td = link_to 'Show', test
-        td = link_to 'Edit', edit_test_path(test)
-        td = link_to 'Destroy', test, data: { confirm: 'Are you sure?' }, method: :delete
-
-br
-
-= link_to 'New Test', new_test_path
+- if @tests.blank?
+    p.no-content No content.
+- else
+    table.u-full-width
+      thead
+        tr
+          th Name
+          th Description
+          th Show
+          th Edit
+          th Delete
+      tbody
+        - @tests.each do |test|
+          tr
+            td = test.name
+            td = test.description
+            td = link_to material_icon.visibility.md_24, test
+            td = link_to material_icon.edit.md_24, edit_test_path(test)
+            td = link_to material_icon.delete.md_24, test, data: { confirm: 'Are you sure?' }, method: :delete

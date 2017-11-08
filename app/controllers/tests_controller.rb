@@ -86,13 +86,13 @@ class TestsController < ApplicationController
       params.require(:test).permit(
         :name,
         :description,
-        test_parts_attributes: [
+        parts_attributes: [
           :id,
           :name,
           :description,
           :design_type,
           :_destroy,
-          test_variables_attributes: [
+          variables_attributes: [
             :id,
             :name,
             :data_type,

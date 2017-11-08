@@ -6,7 +6,7 @@
         = f.text_field :name, class: 'u-full-width'
       .field
         = f.label :design_type
-        = f.select :design_type, options_for_select(design_options),{}, {class: 'u-full-width'}
+        = f.select :design_type, options_for_select(design_options), {}, {class: 'u-full-width'}
     .eight.columns
       .field
         = f.label :description
@@ -15,12 +15,12 @@
   = link_to_remove_association(f) do
     == material_icon.cancel.md_24
 
-  h4.title Test variables
+  h5 Test variables
   #test_variables
-    = f.fields_for :test_variables do |variable|
-      = render 'test_variable_fields', f: variable
+    = f.fields_for :variables do |variable|
+      = render 'variable_fields', f: variable
     .add-link
-      = link_to_add_association(f, :test_variables) do
+      = link_to_add_association(f, :variables) do
         | add variable
 
 

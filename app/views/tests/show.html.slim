@@ -6,8 +6,22 @@
 p.small
   = @test.description
 
+h5 Parts
 
-hr
-p Graphs
+.row
+  - @test.parts.each do |part|
+    .part.row
+      .six.columns
+        strong = part.name
+        p.small
+          = part.description
+          br
+          = "[ #{part.variables_to_s} ]"
+      .six.columns
+        label Access token
+        input.u-full-width type="text" value=part.access_token readonly="true"
+    hr
+
+h5 Graphs
 
 

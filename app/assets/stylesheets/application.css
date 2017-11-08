@@ -18,6 +18,10 @@
  *= require toastr
  */
 
+h5 {
+    border-bottom: 1px solid #ddd;
+}
+
 
 .text-right {
     text-align: right;

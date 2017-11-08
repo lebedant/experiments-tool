@@ -4,7 +4,7 @@ class TestVariablesController < ApplicationController
   # GET /test_variables
   # GET /test_variables.json
   def index
-    @test_variables = TestVariable.all
+    @test_variables = Test::Variable.all
   end
 
   # GET /test_variables/1
@@ -14,7 +14,7 @@ class TestVariablesController < ApplicationController
 
   # GET /test_variables/new
   def new
-    @test_variable = TestVariable.new
+    @test_variable = Test::Variable.new
   end
 
   # GET /test_variables/1/edit
@@ -24,7 +24,7 @@ class TestVariablesController < ApplicationController
   # POST /test_variables
   # POST /test_variables.json
   def create
-    @test_variable = TestVariable.new(test_variable_params)
+    @test_variable = Test::Variable.new(test_variable_params)
 
     respond_to do |format|
       if @test_variable.save
@@ -64,7 +64,7 @@ class TestVariablesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_test_variable
-      @test_variable = TestVariable.find(params[:id])
+      @test_variable = Test::Variable.find(params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

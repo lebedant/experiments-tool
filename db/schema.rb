@@ -23,17 +23,27 @@ ActiveRecord::Schema.define(version: 20171105215937) do
     t.integer "value"
   end
 
+  create_table "participants", force: :cascade do |t|
+    t.string "internal_id"
+    t.string "external_id"
+    t.bigint "test_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["test_id"], name: "index_participants_on_test_id"
+  end
+
   create_table "string_data", force: :cascade do |t|
     t.string "value"
   end
 
   create_table "test_data", force: :cascade do |t|
-    t.integer "session_id"
     t.integer "target_id"
     t.string "target_type"
+    t.bigint "participant_id"
     t.bigint "test_variable_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["participant_id"], name: "index_test_data_on_participant_id"
     t.index ["test_variable_id"], name: "index_test_data_on_test_variable_id"
   end
 
@@ -53,10 +63,10 @@ ActiveRecord::Schema.define(version: 20171105215937) do
     t.integer "data_type"
     t.string "name"
     t.boolean "log_transform"
-    t.bigint "test_part_id"
+    t.bigint "part_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["test_part_id"], name: "index_test_variables_on_test_part_id"
+    t.index ["part_id"], name: "index_test_variables_on_part_id"
   end
 
   create_table "tests", force: :cascade do |t|
@@ -87,4 +97,6 @@ ActiveRecord::Schema.define(version: 20171105215937) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "participants", "tests"
+  add_foreign_key "test_data", "participants"
 end

@@ -18,12 +18,12 @@
 
   hr
 
-  h4 Test parts
+  h5 Test parts
   #test_parts
-    = f.fields_for :test_parts do |part|
-      = render 'test_part_fields', f: part
+    = f.fields_for :parts do |part|
+      = render 'part_fields', f: part
     .links
-      = link_to_add_association(f, :test_parts) do
+      = link_to_add_association(f, :parts) do
         | add part
   br
   .actions

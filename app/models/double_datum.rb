@@ -1,3 +1,3 @@
 class DoubleDatum < ApplicationRecord
-    has_many :test_data, as: :target
+  has_many :test_data, as: :target
 end

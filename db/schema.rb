@@ -40,11 +40,11 @@ ActiveRecord::Schema.define(version: 20171105215937) do
     t.integer "target_id"
     t.string "target_type"
     t.bigint "participant_id"
-    t.bigint "test_variable_id"
+    t.bigint "variable_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["participant_id"], name: "index_test_data_on_participant_id"
-    t.index ["test_variable_id"], name: "index_test_data_on_test_variable_id"
+    t.index ["variable_id"], name: "index_test_data_on_variable_id"
   end
 
   create_table "test_parts", force: :cascade do |t|

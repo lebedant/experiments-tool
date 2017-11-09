@@ -17,6 +17,7 @@
 //= require jquery_ujs
 //= require cocoon
 //= require toastr
+//= require d3
 
 /* Global toastr options */
 toastr.options = {

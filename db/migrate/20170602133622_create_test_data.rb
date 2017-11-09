@@ -4,7 +4,7 @@ class CreateTestData < ActiveRecord::Migration[5.1]
         t.integer :target_id
         t.string :target_type
         t.references :participant, foreign_key: true
-        t.belongs_to :test_variable, index: true
+        t.belongs_to :variable, index: true
 
         t.timestamps
     end

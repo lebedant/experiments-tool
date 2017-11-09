@@ -4,6 +4,8 @@ class Test < ApplicationRecord
   has_many :participants, dependent: :destroy
   belongs_to :user
 
+  has_many :data, through: :parts, source: :data
+
   accepts_nested_attributes_for :parts, reject_if: :all_blank, allow_destroy: true
 
   default_scope { order(created_at: :desc) }

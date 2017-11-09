@@ -12,6 +12,10 @@ class TestsController < ApplicationController
   # GET /tests/1.json
   def show
     add_breadcrumb @test.name, @test
+    @grouped_data = @test.data.group_by(&:variable)
+    # @plot_data = [{name: 'A', value: 3}, {name: 'B', value: 8}, {name: 'C', value: 1}]
+    @plot_data = @grouped_data.select{ |data, val| data.name == "Vek" }.values.first
+    @plot_data = @plot_data.map { |datum| { name: "P##{datum.participant_id}", value: datum.target.value } }
   end
 
   # GET /tests/new

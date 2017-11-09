@@ -34,7 +34,7 @@ gem 'jbuilder', '~> 2.5'
 # gem 'capistrano-rails', group: :development
 gem "jquery-rails"
 
-gem "rails-erd"
+gem "rails-erd", group: :development
 
 # DB
 gem 'pg'
@@ -44,18 +44,17 @@ gem 'devise', git: 'https://github.com/gogovan/devise.git', branch: 'rails-5.1'
 gem 'erubis'
 gem 'devise-async'
 
-# CSS/HTML/ICONS
+# CSS/HTML/ICONS/VISUALIZATION
 gem 'slim-rails'
 gem 'material_icons'
-
 gem 'skeleton-rails'
 # , :git => 'https://github.com/helios-technologies/skeleton-rails'
 gem 'toastr-rails'
+gem "d3-rails"
 
+#
 gem "breadcrumbs_on_rails"
-
 gem 'simple_token_authentication', '~> 1.0'
-
 gem "cocoon"
 
 group :development, :test do

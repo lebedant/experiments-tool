@@ -3,6 +3,8 @@ class Test::Part < ApplicationRecord
   has_many :variables, class_name: 'Test::Variable', dependent: :destroy
   has_secure_token :access_token
 
+  has_many :data, through: :variables, source: :values
+
   validates_presence_of :name, :variables
 
   accepts_nested_attributes_for :variables, reject_if: :all_blank, allow_destroy: true

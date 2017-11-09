@@ -22,6 +22,20 @@ h5 Parts
         input.u-full-width type="text" value=part.access_token readonly="true"
     hr
 
-h5 Graphs
+h5 Variables values
+
+.row
+
+  - @grouped_data.each do |variable, values|
+    .data
+      strong = "#{variable.name}: "
+      span = values.map {|val| val.target.value }.join(', ')
+
+
+#chart
+
+javascript:
+  var data = #{{ JSON.dump(@plot_data) }};
+  drawBarPlot(data);
 
 

@@ -1,12 +1,17 @@
 
-.absolute-right
-  = link_to material_icon.edit.md_24, edit_test_path(@test)
-  = link_to material_icon.delete.md_24, @test, data: { confirm: 'Are you sure?' }, method: :delete
+.absolute-right.flex-row
+  #states-block
+    - @test.state_events.each do |event|
+      = link_to t(event), { controller: 'tests', action: event, id: @test.id }, class: 'btn-small'
+  = link_to material_icon.get_app.md_24, test_path(@test, format: :json), title: t(:export_title)
+  = link_to material_icon.content_copy.md_24, copy_test_path(@test), title: t(:duplicate_title)
+  = link_to material_icon.edit.md_24, edit_test_path(@test), title: t(:edit_title) if @test.edit?
+  = link_to material_icon.delete.md_24, @test, data: { confirm: 'Are you sure?' }, method: :delete, title: t(:delete_title)
 
 p.small
   = @test.description
 
-h5 Parts
+h5 = t(:part_plural)
 
 .row
   - @test.parts.each do |part|
@@ -15,14 +20,14 @@ h5 Parts
         strong = part.name
         p.small
           = part.description
-          br
-          = "[ #{part.variables_to_s} ]"
+        p
+          = "#{t(:variable_plural)}: [ #{part.variables_to_s} ]"
       .six.columns
-        label Access token
+        label = t("test/part.access_token")
         input.u-full-width type="text" value=part.access_token readonly="true"
     hr
 
-h5 Variables values
+h5 = t(:values)
 
 .row
 

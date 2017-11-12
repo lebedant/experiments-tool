@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
 git_source(:github) do |repo_name|
-  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
-  "https://github.com/#{repo_name}.git"
+  repo_name = '#{repo_name}/#{repo_name}' unless repo_name.include?('/')
+  'https://github.com/#{repo_name}.git'
 end
 
 
@@ -32,9 +32,9 @@ gem 'jbuilder', '~> 2.5'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
-gem "jquery-rails"
+gem 'jquery-rails'
 
-gem "rails-erd", group: :development
+gem 'rails-erd', group: :development
 
 # DB
 gem 'pg'
@@ -50,12 +50,17 @@ gem 'material_icons'
 gem 'skeleton-rails'
 # , :git => 'https://github.com/helios-technologies/skeleton-rails'
 gem 'toastr-rails'
-gem "d3-rails"
+gem 'd3-rails'
+gem 'jquery-ui-rails'
 
 #
-gem "breadcrumbs_on_rails"
+gem 'breadcrumbs_on_rails'
 gem 'simple_token_authentication', '~> 1.0'
-gem "cocoon"
+gem 'cocoon'
+gem 'amoeba'
+gem 'state_machines-activerecord'
+gem 'simple_enum'
+gem 'will_paginate', '~> 3.1.0'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

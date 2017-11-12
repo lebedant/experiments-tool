@@ -2,6 +2,14 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+#states-block {
+    margin: 0px 50px;
+}
+
+#states-block * + * {
+    margin-left: 10px;
+}
+
 #chart {
     width: 100%;
     height: auto;

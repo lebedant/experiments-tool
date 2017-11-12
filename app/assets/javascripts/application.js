@@ -18,6 +18,10 @@
 //= require cocoon
 //= require toastr
 //= require d3
+//= require jquery-ui/core
+//= require jquery-ui/widget
+//= require jquery-ui/position
+//= require jquery-ui/widgets/tooltip
 
 /* Global toastr options */
 toastr.options = {
@@ -26,14 +30,18 @@ toastr.options = {
   "newestOnTop": false,
   "progressBar": false,
   "preventDuplicates": true,
-  // "positionClass": "toast-top-full-width",
+  "positionClass": "toast-top-left",
   "onclick": null,
-  "showDuration": "2000",
-  "hideDuration": "3000",
-  "timeOut": "5000",
+  "showDuration": "100",
+  "hideDuration": "100",
+  "timeOut": "2000",
   "extendedTimeOut": "1000",
   "showEasing": "linear",
   "hideEasing": "linear",
   "showMethod": "fadeIn",
   "hideMethod": "fadeOut"
 }
+
+$( function() {
+    $( document ).tooltip();
+} );

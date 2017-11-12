@@ -2,82 +2,98 @@ module Api
   module V1
     class TestDataController < ActionController::API
       respond_to :json
-      acts_as_token_authentication_handler_for User
-
       before_action :ensure_json_request
+      before_action :find_test
+      before_action :check_state
+      before_action :find_variable, :find_participant, :check_params, :check_repetition_count, only: :create
 
       def register_participant
-        part = Test::Part.where(access_token: participant_params[:part_id]).first
+        participant_data = {
+          internal_id: SecureRandom.uuid,
+          test_id: @test.id
+        }
 
-        if part
-          participant_data = {
-            internal_id: SecureRandom.uuid,
-            test_id: part.test_id
-          }
-          participant_data[:external_id] = participant_params[:external_id] if participant_params[:external_id]
-
-          participant = Participant.create(participant_data)
-          render json: { internal_id: participant.internal_id }
-        else
-          render json: { error: 'Test part not found' }, status: :not_found
-        end
+        # add external_id to data if it's supplied
+        participant_data[:external_id] = params[:external_id] if params[:external_id]
+        participant = Participant.create(participant_data)
+        render json: { internal_id: participant.internal_id }
       end
 
       def create
-        # current_user
-        # params => json :
-        #  -> access_token for TestPart
-        #  + data: variable name (must be uniq in the part context)
-        #          variable type must match its defined type
-
-        part = Test::Part.where(access_token: data_params[:part_id]).first
-        test = current_user.tests.find(part.test_id)
-
-        if test.nil? || data_params[:variable_name].nil? || data_params[:variable_value].nil? || data_params[:internal_id].nil?
-          msg = { error: "Missing usefull params like variable name and its value." }
-          return render json: msg, status: 400
-        end
-
-        variable = Test::Variable.where(name: data_params[:variable_name], part_id: part.id).first
-        participant = Participant.where(internal_id: data_params[:internal_id]).first
-        # TODO:
-        recordClass =  case data_params[:variable_value].class.name
-                        when "Integer"
-                          LongDatum
-                        when "Float"
-                          DobleDatum
-                        when "String"
-                          StringDatum
-                        end
-
-        record = recordClass.create(value: data_params[:variable_value])
+        recordClass = "#{@variable.type}_datum".classify.constantize
+        record = recordClass.create(value: params[:variable_value])
 
         datum = Test::Datum.create(
           target_id: record.id,
           target_type: recordClass,
-          participant_id: participant.id,
-          variable_id: variable.id
+          participant_id: @participant.id,
+          variable_id: @variable.id
         )
 
-        render json: "ok", status: :ok
+        send_json_status('Ok', 200)
       end
 
 
-
       private
+
+      def find_test
+        @current_part = Test::Part.find_by!(access_token: params[:part_id])
+        @test = @current_part.test
+      rescue ActiveRecord::RecordNotFound
+        send_json_status('Test part not found', 404)
+      end
+
+      def find_variable
+        @variable = Test::Variable.find_by!(
+          name: params[:variable_name],
+          part_id: @current_part.id
+        )
+      rescue ActiveRecord::RecordNotFound
+        send_json_status('Variable not found', 404)
+      end
+
+      def find_participant
+        find_options = if (params[:external_id])
+                        { external_id: params[:external_id] }
+                       else
+                        { internal_id: params[:internal_id] }
+                       end
+        @participant = Participant.find_by!(find_options)
+      rescue ActiveRecord::RecordNotFound
+        send_json_status('Participant not found', 404)
+      end
+
+      def check_state
+        if @test.edit? || @test.closed?
+          send_json_status('Test is currently unavailable', 503)
+        end
+      end
+
+      def check_params
+        if !params[:variable_value]
+          send_json_status('Variable value is missing', 422)
+        end
+      end
+
+      def check_repetition_count
+        existing_data = Test::Datum.where(
+          variable_id: @variable.id,
+          participant_id: @participant.id
+        )
+
+        if (existing_data.count >= @variable.repetition_count)
+          send_json_status('Variable repetition count is exceeded', 422)
+        end
+      end
 
       def ensure_json_request
         return if request.format == :json
         head :not_acceptable
       end
 
-      # Never trust parameters from the scary internet, only allow the white list through.
-      def participant_params
-        params.permit(:part_id, :external_id)
-      end
-
-      def data_params
-        params.permit(:part_id, :external_id, :internal_id, :variable_name, :variable_value)
+      def send_json_status(error, status)
+        msg = { status: status, error: error }
+        return render json: msg, status: status
       end
 
     end

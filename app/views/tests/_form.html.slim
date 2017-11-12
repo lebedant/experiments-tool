@@ -1,10 +1,8 @@
 = form_for @test do |f|
   - if @test.errors.any?
-    #error_explanation
-      p = "#{pluralize(@test.errors.count, "error")} prohibited this test from being saved:"
-      ul.errors
-        - @test.errors.full_messages.each do |message|
-          li = message
+    ul.errors
+      - @test.errors.full_messages.each do |message|
+        li = message
 
   .row
     .four.columns
@@ -16,9 +14,7 @@
         = f.label :description
         = f.text_area :description, class: 'u-full-width'
 
-  hr
-
-  h5 Test parts
+  h5 = t(:part_plural)
   #test_parts
     = f.fields_for :parts do |part|
       = render 'part_fields', f: part

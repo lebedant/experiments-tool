@@ -1,10 +1,13 @@
 .nested-fields.variable
   .field
     = f.label :data_type
-    = f.select :data_type, options_for_select(data_type_options),{}, {class: 'u-full-width'}
+    = f.select :type, enum_option_pairs(Test::Variable, :type),{}, {class: 'u-full-width'}
   .field
     = f.label :variable_name
     = f.text_field :name
+  .field
+    = f.label :repetition_count
+    = f.text_field :repetition_count, type: "number"
   .field
     = f.check_box :log_transform
     = f.label :log_transform

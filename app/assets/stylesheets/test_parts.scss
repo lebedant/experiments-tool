@@ -27,20 +27,21 @@
 }
 
 .add_fields {
-    padding: 5px;
+    padding: 5px 8px;;
     border: 1px solid #1EAEDB;
     background: white;
+    border-radius: 5px;
 }
 
 .add_fields:hover {
     background: #eee;
 }
 
-
 .remove_fields {
     position: absolute;
     top: 1px;
     right: 1px;
+    color: gray;
 }
 
 h4.title {

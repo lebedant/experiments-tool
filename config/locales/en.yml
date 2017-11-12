@@ -30,4 +30,62 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  activerecord:
+    models:
+      test:
+        one: Experiment
+        other: Experiments
+      test_part: Part
+    attributes:
+      test:
+        name: Name
+        description: Description
+        state: Current state
+      test/part:
+        name: Name
+        description: Description
+        design_type: Design type
+        access_token: Token
+
+  #####################################
+  #               ENUMS               #
+  #####################################
+  enums:
+    type:
+      string: 'Text'
+      double: 'Fraction'
+      long:   'Integer'
+    design:
+      within_subject: 'Within Subject Design'
+      between_subject: 'Between Subject Design'
+  #####################################
+  #            BREADCRUMBS            #
+  #####################################
+  edit_breadcrumb: Edit
+  new_test_breadcrumb: New experiment
+  #####################################
+  #          LABELS / HEADERS         #
+  #####################################
+  test: Experiment
+  test_plural: All experiments
+  part: Part
+  part_plural: Parts
+  variable: Variable
+  variable_plural: Variables
+  values: Variables values
+  #####################################
+  #         TITLE DESCRIPTIONS        #
+  #####################################
+  export_title: Export test data
+  duplicate_title: Duplicate test definition
+  edit_title: Edit test
+  delete_title: Delete test permanently
+  #####################################
+  #         STATE TRANSITIONS         #
+  #####################################
+  to_edit: To edit
+  to_test: To test
+  to_open: To open
+  to_closed: To closed
+
+

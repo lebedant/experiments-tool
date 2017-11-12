@@ -7,16 +7,20 @@
     table.u-full-width
       thead
         tr
-          th Name
-          th Description
-          th Show
-          th Edit
-          th Delete
+          th.text-center Name
+          th.text-center State
+          th.text-center Show
+          th.text-center Edit
+          th.text-center Delete
       tbody
         - @tests.each do |test|
           tr
             td = test.name
-            td = test.description
-            td = link_to material_icon.visibility.md_24, test
-            td = link_to material_icon.edit.md_24, edit_test_path(test)
-            td = link_to material_icon.delete.md_24, test, data: { confirm: 'Are you sure?' }, method: :delete
+            td.text-center = test.state
+            td.text-center = link_to material_icon.visibility.md_24, test
+            td.text-center = link_to material_icon.edit.md_24, edit_test_path(test)
+            td.text-center = link_to material_icon.delete.md_24, test, data: { confirm: 'Are you sure?' }, method: :delete
+
+    .page_info
+      = page_entries_info @tests
+    = will_paginate @tests

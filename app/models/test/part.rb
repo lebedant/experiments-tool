@@ -19,6 +19,10 @@ class Test::Part < ApplicationRecord
     include_association :variables
   end
 
+  def to_s
+    name
+  end
+
   def variables_to_s
     variables.map(&:to_s).join(', ')
   end

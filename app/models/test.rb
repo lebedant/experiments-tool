@@ -4,7 +4,7 @@ class Test < ApplicationRecord
   validates_presence_of :name, :parts
   validates :name, uniqueness: true
 
-  has_many :parts, class_name: 'Test::Part', dependent: :destroy
+  has_many :parts, class_name: 'Test::Part', dependent: :destroy, autosave: true, touch: true
   has_many :participants, dependent: :destroy
   has_many :data, through: :parts, source: :data
   belongs_to :user

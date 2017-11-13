@@ -10,13 +10,20 @@
     margin-left: 10px;
 }
 
-#chart {
+#charts {
     width: 100%;
     height: auto;
     margin-bottom: 30px;
 }
 
-.bar { fill: steelblue; }
+.bar {
+  fill: steelblue;
+}
+
+.bar-text {
+  fill: #fff;
+  font: 12px sans-serif;
+}
 
 .axis text {
   font: 10px sans-serif;

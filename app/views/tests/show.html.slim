@@ -29,18 +29,30 @@ h5 = t(:part_plural)
 
 h5 = t(:values)
 
-.row
+- prev_part = false
 
-  - @grouped_data.each do |variable, values|
+.row
+  - @grouped_by_variable.each do |variable, values|
+    - part = variable.part
     .data
+      - if part != prev_part
+        strong = "#{variable.part}"
+        br
+
       strong = "#{variable.name}: "
       span = values.map {|val| val.target.value }.join(', ')
+    - prev_part = part
 
 
-#chart
+#charts
 
 javascript:
-  var data = #{{ JSON.dump(@plot_data) }};
-  drawBarPlot(data);
+  var plots = #{{ JSON.dump(@plot_data) }};
+  var i = 1;
+  for (var variableName in plots) {
+    drawBarPlot(variableName, plots[variableName], `chart-${i++}`);
+  }
+
+
 
 

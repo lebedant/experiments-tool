@@ -15,7 +15,7 @@ class Test::Variable < ApplicationRecord
   end
 
   def clear_data
-    self.values.delete_all
+    self.values.update_all(delete_reason: 'test')
   end
 
   def data

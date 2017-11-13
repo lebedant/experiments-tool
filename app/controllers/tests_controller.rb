@@ -15,19 +15,27 @@ class TestsController < ApplicationController
   def show
     add_breadcrumb "#{@test.name} [#{@test.state}]", @test
     # group by variable
-    @grouped_by_variable = @test.data.group_by(&:variable)
+    @grouped_by_variable = @test.data.active.group_by(&:variable)
     # select all but StringDatum
+    filtered_data_for_plots = @grouped_by_variable.select { |variable, values| variable.type != :string }
 
+    @plot_data = {}
     # prepare plot data
-    @plot_data = [{name: 'A', value: 3}, {name: 'B', value: 8}, {name: 'C', value: 1}]
+    filtered_data_for_plots.each do |var, data|
+      unsorted_data = data.map { |datum| { name: "D##{datum.id}", value: datum.target.value } }
+      @plot_data["#{var.part} #{var.name}"] = unsorted_data.sort_by {|item| item[:value]}
+    end
+
+    # byebug
+
+    # @plot_data = [{name: 'A', value: 3}, {name: 'B', value: 8}, {name: 'C', value: 1}]
     # @plot_data = @grouped_data.select{ |data, val| data.name == "Vek" }.values.first
     # @plot_data = @plot_data.map { |datum| { name: "P##{datum.participant_id}", value: datum.target.value } }
-
-    file_name = "#{@test.name.parameterize.underscore}"
 
     respond_to do |format|
       format.html {}
       format.json {
+        file_name = "#{@test.name.parameterize.underscore}"
         flash[:notice] = 'Test was successfully exported.'
         content = @test.to_json
         send_data content, filename: "#{file_name}.json"

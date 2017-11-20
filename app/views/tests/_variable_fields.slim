@@ -4,10 +4,10 @@
     = f.select :type, enum_option_pairs(Test::Variable, :type),{}, {class: 'u-full-width'}
   .field
     = f.label :variable_name
-    = f.text_field :name
+    = f.text_field :name, class: 'u-full-width'
   .field
     = f.label :repetition_count
-    = f.text_field :repetition_count, type: "number"
+    = f.text_field :repetition_count, type: "number", min: 1, max: 100, class: 'u-full-width'
   .field
     = f.check_box :log_transform
     = f.label :log_transform

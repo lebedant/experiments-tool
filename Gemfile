@@ -50,10 +50,13 @@ gem 'material_icons'
 gem 'skeleton-rails'
 # , :git => 'https://github.com/helios-technologies/skeleton-rails'
 gem 'toastr-rails'
-gem 'd3-rails'
+gem 'bootstrap-sass', '~> 3.3.7'
+# -------
 gem 'jquery-ui-rails'
 
-#
+gem 'histogram'
+
+# OTHER
 gem 'breadcrumbs_on_rails'
 gem 'simple_token_authentication', '~> 1.0'
 gem 'cocoon'
@@ -61,6 +64,8 @@ gem 'amoeba'
 gem 'state_machines-activerecord'
 gem 'simple_enum'
 gem 'will_paginate', '~> 3.1.0'
+
+gem 'popper_js', '~> 1.12.3'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

@@ -1,58 +1,106 @@
 
 .absolute-right.flex-row
-  #states-block
-    - @test.state_events.each do |event|
-      = link_to t(event), { controller: 'tests', action: event, id: @test.id }, class: 'btn-small'
   = link_to material_icon.get_app.md_24, test_path(@test, format: :json), title: t(:export_title)
   = link_to material_icon.content_copy.md_24, copy_test_path(@test), title: t(:duplicate_title)
   = link_to material_icon.edit.md_24, edit_test_path(@test), title: t(:edit_title) if @test.edit?
   = link_to material_icon.delete.md_24, @test, data: { confirm: 'Are you sure?' }, method: :delete, title: t(:delete_title)
+
+
+#timeline
+  ul
+    - Test::ALL_EVENTS.each do |event|
+      li
+        - if @test.send("#{event}?")
+          span(class='active') = t("to_#{event}")
+        - else
+          = link_to t("to_#{event}"), { controller: 'tests', action: "to_#{event}", id: @test.id }, class: !@test.send("can_to_#{event}?") ? 'disabled' : '', title: t("#{event}_description")
 
 p.small
   = @test.description
 
 h5 = t(:part_plural)
 
-.row
+.flex-row
   - @test.parts.each do |part|
-    .part.row
-      .six.columns
+    .part.card.col
+      .card-header
         strong = part.name
+      .card-body
         p.small
           = part.description
         p
           = "#{t(:variable_plural)}: [ #{part.variables_to_s} ]"
-      .six.columns
+      .card-footer
         label = t("test/part.access_token")
         input.u-full-width type="text" value=part.access_token readonly="true"
-    hr
+br
 
 h5 = t(:values)
 
-- prev_part = false
+= form_tag(@test, method: :get, class: 'query_form') do
+  label = t(:target_variable)
+  = select_tag('target_variable', options_for_select(@uniq_vars, params[:target_variable]))
 
-.row
-  - @grouped_by_variable.each do |variable, values|
-    - part = variable.part
-    .data
-      - if part != prev_part
-        strong = "#{variable.part}"
-        br
+  label = t(:filter_variable)
+  = select_tag('filter_variable', options_for_select(@uniq_vars, params[:filter_variable]))
 
-      strong = "#{variable.name}: "
-      span = values.map {|val| val.target.value }.join(', ')
-    - prev_part = part
+  label.form-check-label
+    = check_box_tag('through_parts', true, params[:through_parts])
+    = t(:through_parts)
 
+  label = t(:group_by_variable)
+  = select_tag('group_by_variable', options_for_select(@uniq_vars, params[:group_by_variable]))
+  = submit_tag('Show', name: nil, class: 'button-primary')
 
-#charts
+- if @grouped_by_variable.present?
 
-javascript:
-  var plots = #{{ JSON.dump(@plot_data) }};
-  var i = 1;
-  for (var variableName in plots) {
-    drawBarPlot(variableName, plots[variableName], `chart-${i++}`);
-  }
+    #box-charts.card
+        == render partial: 'chart_settings', locals: { parent_id: 'box-charts', chart_id: 'boxplot' }
+        .card-header
+          strong Confidence intervals
+          .card-actions
+            a.settings Settings
+            a.download Save
+        .card-body style="position: relative; height:340px;"
 
+    / - prev_part = false
+    / .row
+    /   - @grouped_by_variable.each do |variable, values|
+    /     - part = variable.part
+    /     .data
+    /       - if part != prev_part
+    /         strong = "#{variable.part}"
+    /         br
+    /       strong = "#{variable.name}: "
+    /       span = values.map {|val| val.target.value }.join(', ')
+    /     - prev_part = part
 
+    h5 Control variables data
+    = form_tag(@test, method: :get, class: 'query_form') do
+      = select_tag('chart_variable', grouped_options_for_select(@grouped_variables, params[:chart_variable], prompt: '--- Please select ---'))
+      = submit_tag('Show', name: nil, class: 'button-primary')
 
+    - if @histogram_data
+      #histogram-container.card
+        == render partial: 'chart_settings', locals: { parent_id: 'histogram-container', chart_id: 'histogram' }
+        .card-header
+          strong Histogram
+          .card-actions
+            a.settings Settings
+            a.download Save
+        .card-body style="position: relative; height:240px;"
+
+    javascript:
+      var histogramData = #{{ JSON.dump(@histogram_data) }};
+      if (histogramData) {
+        drawHistogram(histogramData[0], histogramData[1]);
+      }
+
+      var boxplotData = #{{ JSON.dump(@boxplot_data) }};
+      if (boxplotData) {
+        drawBoxplot(boxplotData);
+      }
+
+- else
+  p.no-content No data.
 

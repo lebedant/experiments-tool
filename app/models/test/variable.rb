@@ -4,6 +4,7 @@ class Test::Variable < ApplicationRecord
 
   validates_presence_of :name, :data_type
   validates :name, uniqueness: { scope: :part, message: "should be unique in Part context." }
+  validates :repetition_count, numericality: { greater_than: 0 }
 
   as_enum :type, %i{string long double}, source: :data_type
 
@@ -19,7 +20,7 @@ class Test::Variable < ApplicationRecord
   end
 
   def data
-    values.map {|value| value.target.value }
+    values.map { |value| value.target.value.to_f }
   end
 
 end

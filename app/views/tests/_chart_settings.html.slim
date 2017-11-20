@@ -1,0 +1,84 @@
+
+.popover.fade.top.in role="tooltip"
+  .arrow style="left: 50%;"
+  h3.popover-title Chart Settings
+  .popover-content
+    .legend-options
+      label.form-check-label
+        input.show-legend type="checkbox"
+        | Show legend
+      .details
+        label Position
+        select.position
+          option value='top' Top
+          option value='bottom' Bottom
+    .grid-options
+      label.form-check-label
+        input.show-grid(type='checkbox')
+        | Show grid
+    .title-options
+      label.form-check-label
+        input.show-title(type='checkbox')
+        | Show title
+      .details
+        label Title text
+        input.title-text type='text'
+
+
+  javascript:
+    $(function() {
+      var parentId = "#{parent_id}";
+      var parentContainer = $('#'+parentId);
+      var canvasId = "#{chart_id}";
+      var canvasObj = $('#'+canvasId);
+      var chartId = canvasObj.data('chart-id');
+      var chart = Chart.instances[chartId];
+
+      var showLegend = parentContainer.find('.show-legend');
+      var showGrid = parentContainer.find('.show-grid');
+      var showTitle = parentContainer.find('.show-title');
+      var downloadButton = parentContainer.find('.download');
+      var settingsButton = parentContainer.find('.settings');
+      var popoverCard = parentContainer.find('.popover');
+
+      var selectPosition = parentContainer.find('.position');
+      var titleInput = parentContainer.find('.title-text')
+
+      // showGrid.click(function(e) {
+      //   $('#grid-options .details').toggle();
+      //   chart.options.legend.display = $(this).is(":checked");
+      //   chart.update();
+      // });
+
+      function downloadChart() {
+        var url = chart.toBase64Image();
+        download(url, canvasId+'.png');
+      }
+
+      downloadButton.click(downloadChart);
+
+      showLegend.click(function(e) {
+        chart.options.legend.display = $(this).is(":checked");
+        chart.update();
+      });
+
+      selectPosition.change(function(e) {
+        chart.options.legend.position = $(this).val();
+        chart.update();
+      });
+
+      showTitle.click(function(e) {
+        chart.options.title.display = $(this).is(":checked");
+        chart.update();
+      });
+
+      titleInput.on('keyup', function(e) {
+        chart.options.title.text = $(this).val();
+        chart.update();
+      });
+
+      settingsButton.click(function(e) {
+        popoverCard.toggle();
+      });
+
+    });

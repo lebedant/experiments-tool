@@ -1,18 +1,24 @@
 class Test < ApplicationRecord
   self.per_page = 10
 
-  validates_presence_of :name, :parts
-  validates :name, uniqueness: true
-
-  has_many :parts, class_name: 'Test::Part', dependent: :destroy, autosave: true, touch: true
+  has_many :parts, class_name: 'Test::Part', dependent: :destroy, autosave: true
   has_many :participants, dependent: :destroy
   has_many :data, through: :parts, source: :data
+  has_many :variables, through: :parts
   belongs_to :user
   # Recursive association for action "Copy"
   has_many :children, class_name: 'Test', foreign_key: "copy_parent_id"
 
   accepts_nested_attributes_for :parts, reject_if: :all_blank, allow_destroy: true
 
+  # VALIDATIONS
+  validates_presence_of :name, :parts
+  validates :name, uniqueness: true
+
+  # FILTERS (before/after)
+  after_save :cascade_save_parts
+
+  # SCOPES
   default_scope { order(created_at: :desc) }
 
   # Enable nested copy
@@ -28,6 +34,8 @@ class Test < ApplicationRecord
       new_record.name += " (#{children_count})"
     })
   end
+
+  ALL_EVENTS = [:edit, :test, :open, :closed]
 
   # Define states transitions
   state_machine :state, initial: :edit do
@@ -54,10 +62,17 @@ class Test < ApplicationRecord
     after_transition on: :to_edit, do: :clear_data
   end
 
+  def cascade_save_parts
+    self.parts.each(&:save) if valid?
+  end
 
   def clear_data
     self.parts.each(&:clear_data)
   end
+
+  # def validate_uniq_name
+  #   where(self.name.parameterize)
+  # end
 
   def as_json(options)
     super(

@@ -17,11 +17,15 @@
 //= require jquery_ujs
 //= require cocoon
 //= require toastr
-//= require d3
+//= require bootstrap
 //= require jquery-ui/core
 //= require jquery-ui/widget
 //= require jquery-ui/position
 //= require jquery-ui/widgets/tooltip
+//= require popper
+//= require download
+//= require Chart
+
 
 /* Global toastr options */
 toastr.options = {
@@ -43,5 +47,12 @@ toastr.options = {
 }
 
 $( function() {
-    $( document ).tooltip();
-} );
+  $( document ).tooltip();
+
+  $('[data-toggle="popover"]').popover({
+    html: true,
+    content: function() {
+      return $('#popover-content').html();
+    }
+  });
+});

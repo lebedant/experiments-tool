@@ -1,8 +1,21 @@
+require 'histogram/array'
+
 class TestsController < ApplicationController
   allowed_ghost_actions [:to_test, :to_edit, :to_open, :to_closed]
   before_action :set_test, except: [:new, :create, :index]
   before_action :check_state, only: [:edit, :update]
   add_breadcrumb I18n.t(:test_plural), :tests_path
+
+
+  def colors
+    [
+      "rgba(20,220,220,0.3)",
+      "rgba(30,240,120,0.3)",
+      "rgba(40,120,200,0.3)",
+      "rgba(120,220,220,0.3)",
+      "rgba(20,220,220,0.3)"
+    ]
+  end
 
   # GET /tests
   # GET /tests.json
@@ -13,27 +26,26 @@ class TestsController < ApplicationController
   # GET /tests/1
   # GET /tests/1.json
   def show
-    add_breadcrumb "#{@test.name} [#{@test.state}]", @test
+    add_breadcrumb "#{@test.name}", @test
     # group by variable
     @grouped_by_variable = @test.data.active.group_by(&:variable)
-    # select all but StringDatum
-    filtered_data_for_plots = @grouped_by_variable.select { |variable, values| variable.type != :string }
 
-    @plot_data = {}
-    # prepare plot data
-    filtered_data_for_plots.each do |var, data|
-      unsorted_data = data.map { |datum| { name: "D##{datum.id}", value: datum.target.value } }
-      @plot_data["#{var.part} #{var.name}"] = unsorted_data.sort_by {|item| item[:value]}
+    # Grouped select options for all variables (grouped by part)
+    @grouped_variables = {}
+    @test.parts.each do |part|
+      @grouped_variables[part.name] = part.variables.pluck(:name, :id)
     end
 
-    # byebug
+    @uniq_vars = @test.variables.pluck(:name).uniq
 
-    # @plot_data = [{name: 'A', value: 3}, {name: 'B', value: 8}, {name: 'C', value: 1}]
-    # @plot_data = @grouped_data.select{ |data, val| data.name == "Vek" }.values.first
-    # @plot_data = @plot_data.map { |datum| { name: "P##{datum.participant_id}", value: datum.target.value } }
+    # Histogram chart for check data
+    prepare_data_for_var(params[:chart_variable]) if params[:chart_variable]
+    prepare_boxplot_data(@grouped_by_variable)
 
+    #
     respond_to do |format|
       format.html {}
+      # Download as json
       format.json {
         file_name = "#{@test.name.parameterize.underscore}"
         flash[:notice] = 'Test was successfully exported.'
@@ -41,7 +53,58 @@ class TestsController < ApplicationController
         send_data content, filename: "#{file_name}.json"
       }
     end
+  end
 
+  def prepare_data_for_var(variable_id)
+    variable = Test::Variable.find(variable_id)
+    # can't work with no data
+    if variable.data.blank?
+      # flash[:error] = 'This variable has no data yet.'
+      return
+    end
+    # histogram plot
+    x,y = variable.data.histogram(bin_width: 1.0)
+    pairs = x.zip(y)
+    @histogram_data = [variable.name]
+    @histogram_data << pairs.map { |value, count| { x: value, y: count } }
+  end
+
+  def prepare_boxplot_data(grouped_by_variable)
+    # var barChartData = {
+    #        labels: ["January", "February", "March", "April", "May", "June", "July"],
+    #        datasets: [{
+    #            label: 'Dataset 1',
+    #            backgroundColor: "rgba(220,220,220,0.5)",
+    #            errorDir: 'up',
+    #            data: [1, 2, 3, 4, 5, ...],
+    #            error: [1/2, 2/2, 3/2, 4/2, 5/2, ...]
+    #        }, {
+    #            hidden: true,
+    #            label: 'Dataset 2',
+    #            backgroundColor: "rgba(151,187,205,0.5)",
+    #            data: [1, 2, 3, 4, 5, ...],
+    #            error: [1/2, 2/2, 3/2, 4/2, 5/2, ...]
+    #        }, {
+    #            label: 'Dataset 3',
+    #            backgroundColor: "rgba(151,187,205,0.5)",
+    #            data: [1, 2, 3, 4, 5, ...],
+    #            error: [1/2, 2/2, 3/2, 4/2, 5/2, ...]
+    #        }]
+    #    };
+
+    # labels from filter_variable
+    @boxplot_data = { labels: @test.parts.pluck(:name), datasets: [] }
+    i = 0
+
+    grouped_by_variable.each do |var, data|
+      @boxplot_data[:datasets] << {
+                          label: var.name, # legend name => group_by_variable (or part name)
+                          backgroundColor: colors[i],
+                          data: [10, 15],
+                          error: [10/5, 15/5]
+                        }
+      i += 1
+    end
   end
 
   # GET /tests/new

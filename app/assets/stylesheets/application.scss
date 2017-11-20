@@ -1,0 +1,412 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ *= require normalize
+ *= require skeleton
+ *= require material_icons
+ *= require toastr
+ *= require jquery-ui/tooltip
+ *= require jquery-ui/core
+ *= require jquery-ui/theme
+ */
+
+h5 {
+    border-bottom: 1px solid #ddd;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.nav {
+    margin: 10px 0px;
+    border-bottom: 1px solid #ddd;
+}
+
+.nav-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.nav .button {
+    margin-left: 5px;
+}
+
+.nav .icon {
+    margin: 0px 5px;
+}
+
+ul.errors {
+    list-style: none;
+}
+
+ul.errors li {
+    background: #ffcfcf;
+    padding: 5px 10px;
+}
+
+input[type="checkbox"] ~ label {
+    display: inline-block;
+}
+
+input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.checkbox input[type="checkbox"] {
+    margin: 0px;
+}
+
+.no-content {
+    padding: 10px 8px;
+    background: #fff2d3;
+    text-align: center;
+}
+
+.small {
+    color: gray;
+    font-size: 90%;
+}
+
+/* FLEX ROW */
+
+.flex-row {
+    display: flex;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -moz-flex;
+    display: -webkit-flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    -webkit-flex-wrap: wrap;
+    overflow: hidden;
+}
+
+.flex-row > * + * {
+    margin-left: 20px;
+}
+
+.flex-row.baseline {
+    align-items: baseline;
+}
+
+.flex-row.center {
+    justify-content: center;
+    align-items: center;
+}
+
+.flex-row .col {
+  flex: 1;
+  overflow-y: auto;
+}
+
+#content {
+    position: relative;
+}
+
+.absolute-right {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.absolute-right > * + * {
+    margin-left: 10px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.btn-small {
+    display: inline-block;
+    padding: 0 15px;
+    color: #555;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 28px;
+    letter-spacing: .1rem;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    background-color: transparent;
+    border-radius: 4px;
+    border: 1px solid #bbb;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+ul.errors li {
+    padding: 5px 10px;
+    border: 1px solid #e97373;
+    border-radius: 5px;
+    color: #b41515;
+    background: rgba(252, 161, 161, 0.21);
+}
+
+/* PAGINATION */
+
+.pagination {
+    margin: 10px 0px;
+}
+
+.pagination a,
+.pagination .previous_page,
+.pagination .next_page,
+.pagination .current {
+    border: 1px solid #1faddb;
+    border-radius: 5px;
+    padding: 5px 8px;
+    text-decoration: none;
+}
+
+.pagination a:hover {
+    color: black;
+}
+
+.pagination .current {
+    background: #1faddb;
+    color: white;
+}
+
+.pagination .disabled {
+    color: #aaa;
+    border-color: #ddd;
+}
+
+/* BOX */
+
+.box {
+    background: white;
+    border: 1px solid #c2cfd6;
+    border-radius: 5px;
+    padding: 10px 35px;
+    box-shadow: 1px 2px 2px #c3c3c3;
+}
+
+.login {
+    width: 250px;
+}
+
+/* ARROW BUTTON */
+
+#timeline ul {
+    list-style: none;
+    display: inline-table;
+}
+
+#timeline ul li {
+    display: inline;
+}
+
+#timeline ul li span.active {
+    background: #3498db;
+}
+
+#timeline > ul li span.active:after {
+    border-left: 20px solid #3498db;
+}
+
+#timeline ul li a:hover {
+    background: #52adea;
+}
+
+#timeline > ul li a:hover:after {
+    border-left: 20px solid #52adea;
+}
+
+#timeline ul li a.disabled {
+    background: #ddd;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+#timeline > ul li a.disabled:after {
+    border-left: 20px solid #ddd;
+}
+
+#timeline ul li a,
+#timeline ul li span {
+    display: block;
+    float: left;
+    height: 40px;
+    background: #a8a8a8;
+    text-align: center;
+    padding: 12px 10px 0 30px;
+    position: relative;
+    margin: 0 5px 0 0;
+    font-size: 12px;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #fff;
+}
+
+#timeline > ul li a:after,
+#timeline > ul li span:after {
+    content: "";
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-left: 20px solid #a8a8a8;
+    position: absolute;
+    right: -20px;
+    top: 0;
+    z-index: 1;
+}
+
+#timeline > ul li a:before,
+#timeline > ul li span:before {
+    content: "";
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-left: 20px solid white;
+    position: absolute; left: 0; top: 0;
+}
+
+
+#timeline ul li:first-child a {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+#timeline ul li:first-child a:before {
+    display: none;
+}
+
+#timeline ul li:last-child a {
+    padding-right: 25px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+#timeline ul li:last-child a:after {
+    display: none;
+}
+
+/**/
+
+.query_form > * {
+    margin-right: 10px;
+}
+
+
+/* GRAPH UI OPTIONS */
+
+.popover-content select,
+.popover-content input[type='text'] {
+    height: 28px;
+}
+
+label.form-check-label {
+    font-weight: normal;
+}
+
+.details {
+    margin-left: 17px;
+}
+
+.details * {
+    display: inline-block;
+}
+
+.details label {
+    margin-right: 10px;
+}
+
+#position {
+    width: 100px;
+}
+
+/* CARDS */
+
+.card {
+    position: relative;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid #c2cfd6;
+    margin-bottom: 15px;
+}
+
+.card-header {
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 0;
+    background-color: #f0f3f5;
+    border-bottom: 1px solid #c2cfd6;
+}
+
+.card-header .card-actions a:hover {
+    background: #ddd;
+    text-decoration: none;
+}
+
+.card-header .card-actions a,
+.card-header .card-actions button {
+    cursor: pointer;
+    display: block;
+    float: left;
+    /*width: 50px;*/
+    padding: 8px;
+    /*padding: 0.75rem 0;*/
+    margin: 0 !important;
+    color: #151b1e;
+    text-align: center;
+    background: transparent;
+    border: 0;
+    border-left: 1px solid #c2cfd6;
+    box-shadow: 0;
+}
+
+.card-body,
+.card-block {
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 1.25rem;
+}
+
+.card-footer {
+    padding: 1.25rem;
+}
+
+.card-header .card-actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+/*  POPOVER */
+
+.popover {
+    top: -215px;
+    /*right: -68px;*/
+    left: 665px;
+    max-width: 295px;
+}
+
+
+

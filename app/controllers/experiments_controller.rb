@@ -1,10 +1,10 @@
 require 'histogram/array'
 
-class TestsController < ApplicationController
+class ExperimentsController < ApplicationController
   allowed_ghost_actions [:to_test, :to_edit, :to_open, :to_closed]
-  before_action :set_test, except: [:new, :create, :index]
+  before_action :set_experiment, except: [:new, :create, :index]
   before_action :check_state, only: [:edit, :update]
-  add_breadcrumb I18n.t(:test_plural), :tests_path
+  add_breadcrumb I18n.t(:experiment_plural), :experiments_path
 
 
   def colors
@@ -17,27 +17,27 @@ class TestsController < ApplicationController
     ]
   end
 
-  # GET /tests
-  # GET /tests.json
+  # GET /experiments
+  # GET /experiments.json
   def index
-    @tests = Test.page(params[:page])
+    @experiments = Experiment.page(params[:page])
   end
 
-  # GET /tests/1
-  # GET /tests/1.json
+  # GET /experiments/1
+  # GET /experiments/1.json
   def show
-    add_breadcrumb "#{@test.name}", @test
+    add_breadcrumb "#{@experiment.name}", @experiment
     # group by variable
-    @grouped_by_variable = @test.data.active.group_by(&:variable)
+    @grouped_by_variable = @experiment.data.active.group_by(&:variable)
 
     # Grouped select options for all variables (grouped by part)
     @grouped_variables = {}
-    @test.parts.each do |part|
+    @experiment.parts.each do |part|
       @grouped_variables[part.name] = part.variables.pluck(:name, :id)
     end
 
-    @target_vars = @test.variables.not_strings.pluck(:name).uniq
-    @filter_vars = @test.variables.strings.pluck(:name).uniq
+    @target_vars = @experiment.variables.not_strings.pluck(:name).uniq
+    @filter_vars = @experiment.variables.strings.pluck(:name).uniq
 
     # Histogram chart for check data
     prepare_data_for_var(params[:chart_variable]) if params[:chart_variable].present?
@@ -52,7 +52,7 @@ class TestsController < ApplicationController
     @filter_values = {}
 
     @filter_vars.each do |variable_name|
-      @filter_values[variable_name] = @test.json_data.pluck("data ->> '#{variable_name}'").uniq
+      @filter_values[variable_name] = @experiment.json_data.pluck("data ->> '#{variable_name}'").uniq
       @filter_values[variable_name] << "all"
     end
 
@@ -61,95 +61,95 @@ class TestsController < ApplicationController
       format.html {}
       # Download as json
       format.json {
-        file_name = "#{@test.name.parameterize.underscore}"
-        flash[:notice] = 'Test was successfully exported.'
-        content = @test.to_json
+        file_name = "#{@experiment.name.parameterize.underscore}"
+        flash[:notice] = 'Experiment was successfully exported.'
+        content = @experiment.to_json
         send_data content, filename: "#{file_name}.json"
       }
     end
   end
 
-  # GET /tests/new
+  # GET /experiments/new
   def new
-    @test = Test.new(user: current_user)
-    add_breadcrumb t(:new_test_breadcrumb), new_test_path
+    @experiment = Experiment.new(user: current_user)
+    add_breadcrumb t(:new_experiment_breadcrumb), new_experiment_path
   end
 
-  # GET /tests/1/edit
+  # GET /experiments/1/edit
   def edit
-    add_breadcrumb "#{@test.name}", @test
-    add_breadcrumb t(:edit_breadcrumb), edit_test_path(@test)
+    add_breadcrumb "#{@experiment.name}", @experiment
+    add_breadcrumb t(:edit_breadcrumb), edit_experiment_path(@experiment)
   end
 
-  # POST /tests
-  # POST /tests.json
+  # POST /experiments
+  # POST /experiments.json
   def create
-    add_breadcrumb t(:new_test_breadcrumb), {}
-    @test = Test.new(test_params)
-    @test.user = current_user
+    add_breadcrumb t(:new_experiment_breadcrumb), {}
+    @experiment = Experiment.new(experiment_params)
+    @experiment.user = current_user
 
     respond_to do |format|
-      if @test.save
+      if @experiment.save
         format.html {
-          flash[:notice] = 'Test was successfully created.'
-          redirect_to @test
+          flash[:notice] = 'Experiment was successfully created.'
+          redirect_to @experiment
         }
-        format.json { render :show, status: :created, location: @test }
+        format.json { render :show, status: :created, location: @experiment }
       else
         format.html { render :new }
-        format.json { render json: @test.errors, status: :unprocessable_entity }
+        format.json { render json: @experiment.errors, status: :unprocessable_entity }
       end
     end
   end
 
-  # PATCH/PUT /tests/1
-  # PATCH/PUT /tests/1.json
+  # PATCH/PUT /experiments/1
+  # PATCH/PUT /experiments/1.json
   def update
     respond_to do |format|
-      if @test.update(test_params)
+      if @experiment.update(experiment_params)
         format.html {
-          flash[:notice] = 'Test was successfully updated.'
-          redirect_to @test
+          flash[:notice] = 'Experiment was successfully updated.'
+          redirect_to @experiment
         }
-        format.json { render :show, status: :ok, location: @test }
+        format.json { render :show, status: :ok, location: @experiment }
       else
         format.html { render :edit }
-        format.json { render json: @test.errors, status: :unprocessable_entity }
+        format.json { render json: @experiment.errors, status: :unprocessable_entity }
       end
     end
   end
 
-  # DELETE /tests/1
-  # DELETE /tests/1.json
+  # DELETE /experiments/1
+  # DELETE /experiments/1.json
   def destroy
-    @test.destroy
+    @experiment.destroy
     respond_to do |format|
       format.html {
-        flash[:notice] = 'Test was successfully destroyed.'
-        redirect_to tests_url
+        flash[:notice] = 'Experiment was successfully destroyed.'
+        redirect_to experiments_url
       }
       format.json { head :no_content }
     end
   end
 
-  # POST /tests/1/copy
-  # POST /tests/1/copy.json
+  # POST /experiments/1/copy
+  # POST /experiments/1/copy.json
   def copy
-    new_test = @test.amoeba_dup
+    new_experiment = @experiment.amoeba_dup
 
     respond_to do |format|
-      if new_test.save
+      if new_experiment.save
         format.html {
-          flash[:notice] = 'Test was successfully duplicated.'
-          redirect_to new_test
+          flash[:notice] = 'Experiment was successfully duplicated.'
+          redirect_to new_experiment
         }
-        format.json { render :show, status: :ok, location: new_test }
+        format.json { render :show, status: :ok, location: new_experiment }
       else
         format.html {
-          flash[:notice] = new_test.errors.full_messages.join(', ')
-          redirect_to @test
+          flash[:notice] = new_experiment.errors.full_messages.join(', ')
+          redirect_to @experiment
         }
-        format.json { render json: new_test.errors, status: :unprocessable_entity }
+        format.json { render json: new_experiment.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -166,12 +166,12 @@ class TestsController < ApplicationController
   end
 
   def change_state(transition)
-    if @test.send transition
-      flash[:notice] = 'Test state was successfully changed.'
+    if @experiment.send transition
+      flash[:notice] = 'Experiment state was successfully changed.'
     else
-      flash[:alert] = 'Invalid test state transition.'
+      flash[:alert] = 'Invalid experiment state transition.'
     end
-    redirect_to @test
+    redirect_to @experiment
   end
 
   #
@@ -182,19 +182,19 @@ class TestsController < ApplicationController
     super
   end
 
-  def to_test
-    if @test.to_test
-      flash[:notice] = 'Test state was successfully changed.'
+  def to_experiment
+    if @experiment.to_experiment
+      flash[:notice] = 'Experiment state was successfully changed.'
     else
-      flash[:alert] = 'Invalid test state transition.'
+      flash[:alert] = 'Invalid experiment state transition.'
     end
-    redirect_to @test
+    redirect_to @experiment
   end
 
   private
 
     def prepare_data_for_var(variable_id)
-      variable = Test::Variable.find(variable_id)
+      variable = Experiment::Variable.find(variable_id)
       # can't work with no data
       if variable.data.blank?
         # flash[:error] = 'This variable has no data yet.'
@@ -208,8 +208,8 @@ class TestsController < ApplicationController
     end
 
     def prepare_boxplot_data(target_var_name, filter_var_name, filter_var_values)
-      target_var = Test::Variable.where(name: target_var_name).first
-      filter_var = Test::Variable.where(name: filter_var_name).first
+      target_var = Experiment::Variable.where(name: target_var_name).first
+      filter_var = Experiment::Variable.where(name: filter_var_name).first
 
       x_labels = filter_var_values.reject(&:blank?).map { |value| "#{filter_var.name} #{value}" }
 
@@ -220,7 +220,7 @@ class TestsController < ApplicationController
       # for color
       i = 0
 
-      @test.parts.each do |part|
+      @experiment.parts.each do |part|
         means,uppers,lowers = calculate_means_for(part, target_var, filter_var, filter_var_values)
 
         @boxplot_data[:datasets] << {
@@ -265,22 +265,22 @@ class TestsController < ApplicationController
     # ----------------------------------------
 
     def check_state
-      if !@test.edit?
+      if !@experiment.edit?
         flash[:alert] = 'Editation is closed.'
-        redirect_to @test
+        redirect_to @experiment
       end
     end
 
     # Use callbacks to share common setup or constraints between actions.
-    def set_test
-      @test = Test.find(params[:id])
+    def set_experiment
+      @experiment = Experiment.find(params[:id])
     rescue ActiveRecord::RecordNotFound
       render_404
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
-    def test_params
-      params.require(:test).permit(
+    def experiment_params
+      params.require(:experiment).permit(
         :name,
         :description,
         parts_attributes: [

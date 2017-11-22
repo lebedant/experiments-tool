@@ -6,7 +6,7 @@
         = f.text_field :name, class: 'u-full-width'
       .field
         = f.label :design_type
-        = f.select :design, enum_option_pairs(Test::Part, :design), {}, {class: 'u-full-width'}
+        = f.select :design, enum_option_pairs(Experiment::Part, :design), {}, {class: 'u-full-width'}
     .eight.columns
       .field
         = f.label :description

@@ -1,0 +1,26 @@
+.absolute-right
+  = link_to t(:label_new_experiment), new_experiment_path, class: 'button button-primary'
+
+- if @experiments.blank?
+    p.no-content No content.
+- else
+    table.u-full-width
+      thead
+        tr
+          th.text-center Name
+          th.text-center State
+          th.text-center Show
+          th.text-center Edit
+          th.text-center Delete
+      tbody
+        - @experiments.each do |experiment|
+          tr
+            td = experiment.name
+            td.text-center = experiment.state
+            td.text-center = link_to material_icon.visibility.md_24, experiment
+            td.text-center = link_to material_icon.edit.md_24, edit_experiment_path(experiment)
+            td.text-center = link_to material_icon.delete.md_24, experiment, data: { confirm: 'Are you sure?' }, method: :delete
+
+    .page_info
+      = page_entries_info @experiments
+    = will_paginate @experiments

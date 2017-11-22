@@ -1,7 +1,7 @@
-= form_for @test do |f|
-  - if @test.errors.any?
+= form_for @experiment do |f|
+  - if @experiment.errors.any?
     ul.errors
-      - @test.errors.full_messages.each do |message|
+      - @experiment.errors.full_messages.each do |message|
         li = message
 
   .row
@@ -15,7 +15,7 @@
         = f.text_area :description, rows: 35, class: 'u-full-width'
 
   h5 = t(:part_plural)
-  #test_parts
+  #experiment_parts
     = f.fields_for :parts do |part|
       = render 'part_fields', f: part
     .links

@@ -29,8 +29,8 @@ h5 {
     text-align: right;
 }
 
-.nav {
-    margin: 10px 0px;
+.nav.row {
+    margin: 10px 0px !important;
     border-bottom: 1px solid #ddd;
 }
 
@@ -115,6 +115,7 @@ input[type="checkbox"] {
 
 #content {
     position: relative;
+    margin: 10px 0px;
 }
 
 .absolute-right {
@@ -286,20 +287,24 @@ ul.errors li {
 }
 
 
-#timeline ul li:first-child a {
+#timeline ul li:first-child a,
+#timeline ul li:first-child span {
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
 }
-#timeline ul li:first-child a:before {
+#timeline ul li:first-child a:before,
+#timeline ul li:first-child span:before {
     display: none;
 }
 
-#timeline ul li:last-child a {
+#timeline ul li:last-child a,
+#timeline ul li:last-child span {
     padding-right: 25px;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
 }
-#timeline ul li:last-child a:after {
+#timeline ul li:last-child a:after,
+#timeline ul li:last-child span:after {
     display: none;
 }
 

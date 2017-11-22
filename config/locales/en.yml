@@ -32,16 +32,16 @@
 en:
   activerecord:
     models:
-      test:
+      experiment:
         one: Experiment
         other: Experiments
-      test_part: Part
+      experiment_part: Part
     attributes:
-      test:
+      experiment:
         name: Name
         description: Description
         state: Current state
-      test/part:
+      experiment/part:
         name: Name
         description: Description
         design_type: Design type
@@ -62,36 +62,38 @@ en:
   #            BREADCRUMBS            #
   #####################################
   edit_breadcrumb: Edit
-  new_test_breadcrumb: New experiment
+  new_experiment_breadcrumb: New experiment
   #####################################
   #          LABELS / HEADERS         #
   #####################################
-  test: Experiment
-  test_plural: All experiments
+  experiment: Experiment
+  experiment_plural: All experiments
   part: Part
   part_plural: Parts
   variable: Variable
   variable_plural: Variables
   values: Variables values
 
+  label_new_experiment: New experiment
+
   prompt_label: '--- Please select ---'
   positive_skewed_data: Is data positive skewed?
   #####################################
   #         TITLE DESCRIPTIONS        #
   #####################################
-  export_title: Export test data
-  duplicate_title: Duplicate test definition
-  edit_title: Edit test
-  delete_title: Delete test permanently
+  export_title: Export experiment data
+  duplicate_title: Duplicate experiment definition
+  edit_title: Edit experiment
+  delete_title: Delete experiment permanently
 
   edit_description: In this mode You are able to edit experiment definition (add/remove parts/variables. change names etc.)
-  test_description: 'In this mode experiment is open to collect data, so You can test that all works as You expect. '
+  experiment_description: 'In this mode experiment is open to collect data, so You can experiment that all works as You expect. '
   #####################################
   #         STATE TRANSITIONS         #
   #####################################
-  to_edit: To edit
-  to_test: To test
-  to_open: To open
-  to_closed: To closed
+  to_edit: Edit
+  to_test: Debug
+  to_open: Open
+  to_closed: Closed
 
 

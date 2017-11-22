@@ -1,15 +1,15 @@
-class Test::Part < ApplicationRecord
-  belongs_to :test
-  has_many :variables, class_name: 'Test::Variable', dependent: :destroy
+class Experiment::Part < ApplicationRecord
+  belongs_to :experiment
+  has_many :variables, class_name: 'Experiment::Variable', dependent: :destroy
   has_many :data, through: :variables, source: :values
-  has_many :json_data, class_name: 'Test::JsonDatum'
+  has_many :json_data, class_name: 'Experiment::JsonDatum'
 
   accepts_nested_attributes_for :variables, reject_if: :all_blank, allow_destroy: true
 
   as_enum :design, %i{within_subject between_subject}, source: :design_type
 
   validates_presence_of :name, :variables
-  validates :name, uniqueness: { scope: :test, message: 'should be unique in Test context.' }
+  validates :name, uniqueness: { scope: :experiment, message: 'should be unique in Experiment context.' }
 
   before_save :generate_access_token
 
@@ -29,7 +29,7 @@ class Test::Part < ApplicationRecord
   end
 
   def generate_access_token
-    self.access_token = "#{test.name.parameterize}-#{name.parameterize}"
+    self.access_token = "#{experiment.name.parameterize}-#{name.parameterize}"
   end
 
   def clear_data
@@ -37,7 +37,7 @@ class Test::Part < ApplicationRecord
   end
 
   def as_json(options)
-    super(except: [:id, :test_id, :created_at, :updated_at], include: :variables)
+    super(except: [:id, :experiment_id, :created_at, :updated_at], include: :variables)
   end
 
 end

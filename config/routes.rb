@@ -4,10 +4,10 @@ Rails.application.routes.draw do
 
   root to: "home#index"
 
-  resources :test_variables
-  resources :test_parts
+  resources :experiment_variables
+  resources :experiment_parts
 
-  resources :tests do
+  resources :experiments do
     member do
       get 'copy'
       get 'to_test'
@@ -17,12 +17,11 @@ Rails.application.routes.draw do
     end
   end
 
-
   # API routes
   namespace :api, constraints: { format: 'json' } do
     namespace :v1 do
-      post '/register_participant', to: 'test_data#register_participant', as: 'api_registration'
-      post '/test_data', to: 'test_data#create', as: 'api_test_data'
+      post '/register_participant', to: 'experiment_data#register_participant', as: 'api_registration'
+      post '/test_data', to: 'experiment_data#create', as: 'api_test_data'
     end
   end
 end

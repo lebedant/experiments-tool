@@ -1,27 +1,27 @@
 
 .absolute-right.flex-row
-  = link_to material_icon.get_app.md_24, test_path(@test, format: :json), title: t(:export_title)
-  = link_to material_icon.content_copy.md_24, copy_test_path(@test), title: t(:duplicate_title)
-  = link_to material_icon.edit.md_24, edit_test_path(@test), title: t(:edit_title) if @test.edit?
-  = link_to material_icon.delete.md_24, @test, data: { confirm: 'Are you sure?' }, method: :delete, title: t(:delete_title)
+  = link_to material_icon.get_app.md_24, experiment_path(@experiment, format: :json), title: t(:export_title)
+  = link_to material_icon.content_copy.md_24, copy_experiment_path(@experiment), title: t(:duplicate_title)
+  = link_to material_icon.edit.md_24, edit_experiment_path(@experiment), title: t(:edit_title) if @experiment.edit?
+  = link_to material_icon.delete.md_24, @experiment, data: { confirm: 'Are you sure?' }, method: :delete, title: t(:delete_title)
 
 
 #timeline
   ul
-    - Test::ALL_EVENTS.each do |event|
+    - Experiment::ALL_EVENTS.each do |event|
       li
-        - if @test.send("#{event}?")
+        - if @experiment.send("#{event}?")
           span(class='active') = t("to_#{event}")
         - else
-          = link_to t("to_#{event}"), { controller: 'tests', action: "to_#{event}", id: @test.id }, class: !@test.send("can_to_#{event}?") ? 'disabled' : '', title: t("#{event}_description")
+          = link_to t("to_#{event}"), { controller: 'experiments', action: "to_#{event}", id: @experiment.id }, class: !@experiment.send("can_to_#{event}?") ? 'disabled' : '', title: t("#{event}_description")
 
 p.small
-  = @test.description
+  = @experiment.description
 
 h5 = t(:part_plural)
 
 .flex-row
-  - @test.parts.each do |part|
+  - @experiment.parts.each do |part|
     .part.card.col
       .card-header
         strong = part.name
@@ -31,7 +31,7 @@ h5 = t(:part_plural)
         p
           = "#{t(:variable_plural)}: [ #{part.variables_to_s} ]"
       .card-footer
-        label = t("test/part.access_token")
+        label = t("experiment/part.access_token")
         input.u-full-width type="text" value=part.access_token readonly="true"
 br
 
@@ -51,7 +51,7 @@ h5 = t(:values)
 
 - if @grouped_by_variable.present?
 
-  = form_tag(@test, method: :get, class: 'query-form', id: 'boxplot-from') do
+  = form_tag(@experiment, method: :get, class: 'query-form', id: 'boxplot-from') do
     label = t(:target_variable)
     = select_tag('target_var_name', options_for_select(@target_vars, params[:target_var_name]), prompt: t(:prompt_label))
 
@@ -115,7 +115,7 @@ h5 = t(:values)
         }
 
     h5 Control variables data
-    = form_tag(@test, method: :get, class: 'query-form', id: 'histogram-form') do
+    = form_tag(@experiment, method: :get, class: 'query-form', id: 'histogram-form') do
       = select_tag('chart_variable', grouped_options_for_select(@grouped_variables, params[:chart_variable], prompt: t(:prompt_label)))
       = submit_tag('Show', name: nil, class: 'button-primary')
 

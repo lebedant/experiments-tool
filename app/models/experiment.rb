@@ -1,14 +1,14 @@
-class Test < ApplicationRecord
+class Experiment < ApplicationRecord
   self.per_page = 10
 
-  has_many :parts, class_name: 'Test::Part', dependent: :destroy, autosave: true
+  has_many :parts, class_name: 'Experiment::Part', dependent: :destroy, autosave: true
   has_many :participants, dependent: :destroy
   has_many :data, through: :parts, source: :data
   has_many :variables, through: :parts
-  has_many :json_data, class_name: 'Test::JsonDatum'
+  has_many :json_data, class_name: 'Experiment::JsonDatum'
   belongs_to :user
   # Recursive association for action "Copy"
-  has_many :children, class_name: 'Test', foreign_key: "copy_parent_id"
+  has_many :children, class_name: 'Experiment', foreign_key: "copy_parent_id"
 
   accepts_nested_attributes_for :parts, reject_if: :all_blank, allow_destroy: true
 

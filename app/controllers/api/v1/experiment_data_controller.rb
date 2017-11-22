@@ -1,9 +1,9 @@
 module Api
   module V1
-    class TestDataController < ActionController::API
+    class ExperimentDataController < ActionController::API
       respond_to :json
       before_action :ensure_json_request
-      before_action :find_test
+      before_action :find_experiment
       before_action :check_state
       before_action :find_participant, :check_params, only: :create
       # :check_repetition_count,
@@ -11,7 +11,7 @@ module Api
       def register_participant
         participant_data = {
           internal_id: SecureRandom.uuid,
-          test_id: @test.id
+          experiment_id: @experiment.id
         }
 
         # add external_id to data if it's supplied
@@ -26,7 +26,7 @@ module Api
           recordClass = "#{variable.type}_datum".classify.constantize
           record = recordClass.create(value: value)
 
-          datum = Test::Datum.create(
+          datum = Experiment::Datum.create(
             target_id: record.id,
             target_type: recordClass,
             participant_id: @participant.id,
@@ -35,7 +35,7 @@ module Api
         end
 
         # Save to json table
-        Test::JsonDatum.create(test_id: @test.id, part_id: @current_part.id, data: variable_params)
+        Experiment::JsonDatum.create(experiment_id: @experiment.id, part_id: @current_part.id, data: variable_params)
 
         send_json_status('Ok', 200)
       end
@@ -43,15 +43,15 @@ module Api
 
       private
 
-      def find_test
-        @current_part = Test::Part.find_by!(access_token: params[:part_id])
-        @test = @current_part.test
+      def find_experiment
+        @current_part = Experiment::Part.find_by!(access_token: params[:part_id])
+        @experiment = @current_part.experiment
       rescue ActiveRecord::RecordNotFound
-        send_json_status('Test part not found', 404)
+        send_json_status('Experiment part not found', 404)
       end
 
       def find_variable_by(name)
-        Test::Variable.find_by!(
+        Experiment::Variable.find_by!(
           name: name,
           part_id: @current_part.id
         )
@@ -71,8 +71,8 @@ module Api
       end
 
       def check_state
-        if @test.edit? || @test.closed?
-          send_json_status('Test is currently unavailable', 503)
+        if @experiment.edit? || @experiment.closed?
+          send_json_status('Experiment is currently unavailable', 503)
         end
       end
 
@@ -92,7 +92,7 @@ module Api
       end
 
       def check_repetition_count
-        existing_data = Test::Datum.where(
+        existing_data = Experiment::Datum.where(
           variable_id: @variable.id,
           participant_id: @participant.id
         )

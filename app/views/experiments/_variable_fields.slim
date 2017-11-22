@@ -1,7 +1,7 @@
 .nested-fields.variable
   .field
     = f.label :data_type
-    = f.select :type, enum_option_pairs(Test::Variable, :type),{}, {class: 'u-full-width'}
+    = f.select :type, enum_option_pairs(Experiment::Variable, :type),{}, {class: 'u-full-width'}
   .field
     = f.label :variable_name
     = f.text_field :name, class: 'u-full-width'

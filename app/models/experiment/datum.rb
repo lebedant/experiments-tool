@@ -1,5 +1,5 @@
-class Test::Datum < ApplicationRecord
-  belongs_to :variable, class_name: 'Test::Variable'
+class Experiment::Datum < ApplicationRecord
+  belongs_to :variable, class_name: 'Experiment::Variable'
   belongs_to :participant
   belongs_to :target, polymorphic: true
 

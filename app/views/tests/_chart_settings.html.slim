@@ -5,7 +5,7 @@
   .popover-content
     .legend-options
       label.form-check-label
-        input.show-legend type="checkbox"
+        input.show-legend type="checkbox" checked="checked"
         | Show legend
       .details
         label Position
@@ -14,11 +14,14 @@
           option value='bottom' Bottom
     .grid-options
       label.form-check-label
-        input.show-grid(type='checkbox')
-        | Show grid
+        input.show-x-grid type='checkbox' checked="checked"
+        | Show X axes
+      label.form-check-label
+        input.show-y-grid type='checkbox' checked="checked"
+        | Show Y axes
     .title-options
       label.form-check-label
-        input.show-title(type='checkbox')
+        input.show-title type='checkbox'
         | Show title
       .details
         label Title text
@@ -35,7 +38,8 @@
       var chart = Chart.instances[chartId];
 
       var showLegend = parentContainer.find('.show-legend');
-      var showGrid = parentContainer.find('.show-grid');
+      var showXGrid = parentContainer.find('.show-x-grid');
+      var showYGrid = parentContainer.find('.show-y-grid');
       var showTitle = parentContainer.find('.show-title');
       var downloadButton = parentContainer.find('.download');
       var settingsButton = parentContainer.find('.settings');
@@ -44,11 +48,15 @@
       var selectPosition = parentContainer.find('.position');
       var titleInput = parentContainer.find('.title-text')
 
-      // showGrid.click(function(e) {
-      //   $('#grid-options .details').toggle();
-      //   chart.options.legend.display = $(this).is(":checked");
-      //   chart.update();
-      // });
+      showXGrid.click(function(e) {
+        chart.options.scales.xAxes[0].gridLines.display = $(this).is(":checked");
+        chart.update();
+      });
+
+      showYGrid.click(function(e) {
+        chart.options.scales.yAxes[0].gridLines.display = $(this).is(":checked");
+        chart.update();
+      });
 
       function downloadChart() {
         var url = chart.toBase64Image();

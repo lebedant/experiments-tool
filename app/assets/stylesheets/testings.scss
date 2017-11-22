@@ -18,26 +18,7 @@
     margin-bottom: 30px;
 }
 
-.bar {
-  fill: steelblue;
-}
-
-.bar-text {
-  fill: #fff;
-  font: 12px sans-serif;
-}
-
-.axis text {
-  font: 10px sans-serif;
-}
-
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-
-.x.axis path {
+.filter-values,
+[id $= '-options'] {
   display: none;
 }

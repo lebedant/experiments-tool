@@ -5,6 +5,7 @@ class Test < ApplicationRecord
   has_many :participants, dependent: :destroy
   has_many :data, through: :parts, source: :data
   has_many :variables, through: :parts
+  has_many :json_data, class_name: 'Test::JsonDatum'
   belongs_to :user
   # Recursive association for action "Copy"
   has_many :children, class_name: 'Test', foreign_key: "copy_parent_id"

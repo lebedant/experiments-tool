@@ -73,6 +73,9 @@ en:
   variable: Variable
   variable_plural: Variables
   values: Variables values
+
+  prompt_label: '--- Please select ---'
+  positive_skewed_data: Is data positive skewed?
   #####################################
   #         TITLE DESCRIPTIONS        #
   #####################################
@@ -80,6 +83,9 @@ en:
   duplicate_title: Duplicate test definition
   edit_title: Edit test
   delete_title: Delete test permanently
+
+  edit_description: In this mode You are able to edit experiment definition (add/remove parts/variables. change names etc.)
+  test_description: 'In this mode experiment is open to collect data, so You can test that all works as You expect. '
   #####################################
   #         STATE TRANSITIONS         #
   #####################################

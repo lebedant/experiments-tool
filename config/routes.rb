@@ -4,7 +4,6 @@ Rails.application.routes.draw do
 
   root to: "home#index"
 
-
   resources :test_variables
   resources :test_parts
 

@@ -47,12 +47,20 @@ toastr.options = {
 }
 
 $( function() {
+  // init jQueryUI tooltips
   $( document ).tooltip();
 
+  // init Bootstrap popovers
   $('[data-toggle="popover"]').popover({
     html: true,
     content: function() {
       return $('#popover-content').html();
     }
   });
+
+  // hide popovers on mouseleave
+  $('body').on('mouseleave', '.popover', function (e) {
+    $(this).hide();
+  });
+
 });

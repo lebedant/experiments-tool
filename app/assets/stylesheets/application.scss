@@ -305,7 +305,7 @@ ul.errors li {
 
 /**/
 
-.query_form > * {
+.query-form > * {
     margin-right: 10px;
 }
 
@@ -402,11 +402,16 @@ label.form-check-label {
 /*  POPOVER */
 
 .popover {
-    top: -215px;
+    top: -235px;
     /*right: -68px;*/
     left: 665px;
     max-width: 295px;
 }
 
+
+.row {
+    margin: 0px !important;
+    padding: 0px !important;
+}
 
 

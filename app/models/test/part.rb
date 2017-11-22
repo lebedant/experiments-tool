@@ -2,6 +2,7 @@ class Test::Part < ApplicationRecord
   belongs_to :test
   has_many :variables, class_name: 'Test::Variable', dependent: :destroy
   has_many :data, through: :variables, source: :values
+  has_many :json_data, class_name: 'Test::JsonDatum'
 
   accepts_nested_attributes_for :variables, reject_if: :all_blank, allow_destroy: true
 

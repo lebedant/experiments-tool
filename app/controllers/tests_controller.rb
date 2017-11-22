@@ -36,11 +36,25 @@ class TestsController < ApplicationController
       @grouped_variables[part.name] = part.variables.pluck(:name, :id)
     end
 
-    @uniq_vars = @test.variables.pluck(:name).uniq
+    @target_vars = @test.variables.not_strings.pluck(:name).uniq
+    @filter_vars = @test.variables.strings.pluck(:name).uniq
 
     # Histogram chart for check data
-    prepare_data_for_var(params[:chart_variable]) if params[:chart_variable]
-    prepare_boxplot_data(@grouped_by_variable)
+    prepare_data_for_var(params[:chart_variable]) if params[:chart_variable].present?
+
+    # Boxplot chart
+    prepare_boxplot_data(
+      params[:target_var_name],
+      params[:filter_var_name],
+      params[:filter_var_values]
+    ) if params[:target_var_name].present? && params[:filter_var_name].present? && !params[:filter_var_values].blank?
+
+    @filter_values = {}
+
+    @filter_vars.each do |variable_name|
+      @filter_values[variable_name] = @test.json_data.pluck("data ->> '#{variable_name}'").uniq
+      @filter_values[variable_name] << "all"
+    end
 
     #
     respond_to do |format|
@@ -52,58 +66,6 @@ class TestsController < ApplicationController
         content = @test.to_json
         send_data content, filename: "#{file_name}.json"
       }
-    end
-  end
-
-  def prepare_data_for_var(variable_id)
-    variable = Test::Variable.find(variable_id)
-    # can't work with no data
-    if variable.data.blank?
-      # flash[:error] = 'This variable has no data yet.'
-      return
-    end
-    # histogram plot
-    x,y = variable.data.histogram(bin_width: 1.0)
-    pairs = x.zip(y)
-    @histogram_data = [variable.name]
-    @histogram_data << pairs.map { |value, count| { x: value, y: count } }
-  end
-
-  def prepare_boxplot_data(grouped_by_variable)
-    # var barChartData = {
-    #        labels: ["January", "February", "March", "April", "May", "June", "July"],
-    #        datasets: [{
-    #            label: 'Dataset 1',
-    #            backgroundColor: "rgba(220,220,220,0.5)",
-    #            errorDir: 'up',
-    #            data: [1, 2, 3, 4, 5, ...],
-    #            error: [1/2, 2/2, 3/2, 4/2, 5/2, ...]
-    #        }, {
-    #            hidden: true,
-    #            label: 'Dataset 2',
-    #            backgroundColor: "rgba(151,187,205,0.5)",
-    #            data: [1, 2, 3, 4, 5, ...],
-    #            error: [1/2, 2/2, 3/2, 4/2, 5/2, ...]
-    #        }, {
-    #            label: 'Dataset 3',
-    #            backgroundColor: "rgba(151,187,205,0.5)",
-    #            data: [1, 2, 3, 4, 5, ...],
-    #            error: [1/2, 2/2, 3/2, 4/2, 5/2, ...]
-    #        }]
-    #    };
-
-    # labels from filter_variable
-    @boxplot_data = { labels: @test.parts.pluck(:name), datasets: [] }
-    i = 0
-
-    grouped_by_variable.each do |var, data|
-      @boxplot_data[:datasets] << {
-                          label: var.name, # legend name => group_by_variable (or part name)
-                          backgroundColor: colors[i],
-                          data: [10, 15],
-                          error: [10/5, 15/5]
-                        }
-      i += 1
     end
   end
 
@@ -130,7 +92,7 @@ class TestsController < ApplicationController
       if @test.save
         format.html {
           flash[:notice] = 'Test was successfully created.'
-          redirect_to action: :show
+          redirect_to @test
         }
         format.json { render :show, status: :created, location: @test }
       else
@@ -192,7 +154,6 @@ class TestsController < ApplicationController
     end
   end
 
-
   #
   # If the action exists and is included in the allowed actions then is dynamically loaded.
   #
@@ -231,6 +192,77 @@ class TestsController < ApplicationController
   end
 
   private
+
+    def prepare_data_for_var(variable_id)
+      variable = Test::Variable.find(variable_id)
+      # can't work with no data
+      if variable.data.blank?
+        # flash[:error] = 'This variable has no data yet.'
+        return
+      end
+      # histogram plot
+      x,y = variable.data.histogram(bin_width: 1.0)
+      pairs = x.zip(y)
+      @histogram_data = [variable.name]
+      @histogram_data << pairs.map { |value, count| { x: value.round(3), y: count } }
+    end
+
+    def prepare_boxplot_data(target_var_name, filter_var_name, filter_var_values)
+      target_var = Test::Variable.where(name: target_var_name).first
+      filter_var = Test::Variable.where(name: filter_var_name).first
+
+      x_labels = filter_var_values.reject(&:blank?).map { |value| "#{filter_var.name} #{value}" }
+
+      return if x_labels.empty?
+
+      # labels from filter_variable
+      @boxplot_data = { labels: x_labels, datasets: [] }
+      # for color
+      i = 0
+
+      @test.parts.each do |part|
+        means,uppers,lowers = calculate_means_for(part, target_var, filter_var, filter_var_values)
+
+        @boxplot_data[:datasets] << {
+                            label: part.name, # legend name => part name
+                            backgroundColor: colors[i],
+                            data:  means,
+                            error: means.map{|m|  m / 10}
+                          }
+        i += 1
+      end
+    end
+
+    def calculate_means_for(part, target_var, filter_var, filter_var_values)
+      means = []
+      uppers = []
+      lowers = []
+
+      filter_var_values.each do |value|
+        next if value.empty?
+        scope = part.json_data
+        scope = scope.where("data ->> '#{filter_var.name}' = ?", value.to_s) unless value == "all"
+        scope = scope.pluck("data -> '#{target_var.name}'")
+        # type casting
+        data_array = target_var.long? ? scope.map(&:to_i) : scope.map(&:to_f)
+        # calculate
+        mean,upper,lower = mean_and_error_for(data_array)
+        # pushh to result arrays
+        means  << mean
+        uppers << upper
+        lowers << lower
+      end
+      # return multiple values
+      [means, uppers, lowers]
+    end
+
+    def mean_and_error_for(data)
+      mean  = data.sum / data.size
+      upper = mean + 2
+      lower = mean - 3
+    end
+
+    # ----------------------------------------
 
     def check_state
       if !@test.edit?

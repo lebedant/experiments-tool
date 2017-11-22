@@ -100,7 +100,8 @@ function drawHistogram(caption, data) {
     options: {
       title: {
         display: true,
-        text: 'Our 3 Favorite Datasets'
+        text: 'test',
+        position: 'bottom'
       },
       responsive: true,
       maintainAspectRatio: false,
@@ -109,17 +110,17 @@ function drawHistogram(caption, data) {
           display: true,
           scaleLabel: {
               display: true,
-              labelString: 'Count'
+              labelString: 'Frequency'
           },
           ticks: {
-            stepSize: 1,
-            beginAtZero:true
+            stepSize: 2,
+            beginAtZero: true
           }
         }],
          xAxes: [{
           display: true,
           scaleLabel: {
-              display: true,
+              display: false,
               labelString: 'Time'
           }
         }]

@@ -35,49 +35,88 @@ h5 = t(:part_plural)
         input.u-full-width type="text" value=part.access_token readonly="true"
 br
 
+/ - prev_part = false
+/ .row
+/   - @grouped_by_variable.each do |variable, values|
+/     - part = variable.part
+/     .data
+/       - if part != prev_part
+/         strong = "#{variable.part}"
+/         br
+/       strong = "#{variable.name}: "
+/       span = values.map {|val| val.target.value }.join(', ')
+/     - prev_part = part
+
 h5 = t(:values)
-
-= form_tag(@test, method: :get, class: 'query_form') do
-  label = t(:target_variable)
-  = select_tag('target_variable', options_for_select(@uniq_vars, params[:target_variable]))
-
-  label = t(:filter_variable)
-  = select_tag('filter_variable', options_for_select(@uniq_vars, params[:filter_variable]))
-
-  label.form-check-label
-    = check_box_tag('through_parts', true, params[:through_parts])
-    = t(:through_parts)
-
-  label = t(:group_by_variable)
-  = select_tag('group_by_variable', options_for_select(@uniq_vars, params[:group_by_variable]))
-  = submit_tag('Show', name: nil, class: 'button-primary')
 
 - if @grouped_by_variable.present?
 
-    #box-charts.card
-        == render partial: 'chart_settings', locals: { parent_id: 'box-charts', chart_id: 'boxplot' }
-        .card-header
-          strong Confidence intervals
-          .card-actions
-            a.settings Settings
-            a.download Save
-        .card-body style="position: relative; height:340px;"
+  = form_tag(@test, method: :get, class: 'query-form', id: 'boxplot-from') do
+    label = t(:target_variable)
+    = select_tag('target_var_name', options_for_select(@target_vars, params[:target_var_name]), prompt: t(:prompt_label))
 
-    / - prev_part = false
-    / .row
-    /   - @grouped_by_variable.each do |variable, values|
-    /     - part = variable.part
-    /     .data
-    /       - if part != prev_part
-    /         strong = "#{variable.part}"
-    /         br
-    /       strong = "#{variable.name}: "
-    /       span = values.map {|val| val.target.value }.join(', ')
-    /     - prev_part = part
+    label = t(:filter_variable)
+    = select_tag('filter_var_name', options_for_select(@filter_vars, params[:filter_var_name]), prompt: t(:prompt_label))
+
+    .filter-values
+      label = t(:filter_variable_values)
+      #values
+        - @filter_vars.each do |name|
+          = select_tag('filter_var_values[]', options_for_select(@filter_values[name]), prompt: t(:prompt_label), id: "#{name}-options")
+      button.button#add-values-btn Add next value
+
+
+    label.form-check-label
+      = check_box_tag('logarithm', true, params[:logarithm])
+      = t(:positive_skewed_data)
+
+    = submit_tag('Show', name: nil, class: 'button-primary')
+
+    javascript:
+      var filter_var_select = $('#filter_var_name');
+      function toggleOptions() {
+        var name = filter_var_select.val();
+        if (name != "") {
+          $('.filter-values').show();
+          // hide all
+          $("[id $= '-options']").hide();
+          // show only one
+          $(`#${name}-options`).show();
+        } else {
+          $('.filter-values').hide();
+        }
+      }
+
+      filter_var_select.change(toggleOptions);
+      toggleOptions();
+
+      $('#add-values-btn').click(function(e) {
+        var name = filter_var_select.val();
+        var new_options = $(`#${name}-options`).clone();
+        new_options.val("");
+        $('#values').append(new_options);
+        return false;
+      });
+
+    - if @boxplot_data
+      #box-charts.card
+          == render partial: 'chart_settings', locals: { parent_id: 'box-charts', chart_id: 'boxplot' }
+          .card-header
+            strong Confidence intervals
+            .card-actions
+              a.settings Settings
+              a.download Save
+          .card-body style="position: relative; height:340px;"
+
+      javascript:
+        var boxplotData = #{{ JSON.dump(@boxplot_data) }};
+        if (boxplotData) {
+          drawBoxplot(boxplotData);
+        }
 
     h5 Control variables data
-    = form_tag(@test, method: :get, class: 'query_form') do
-      = select_tag('chart_variable', grouped_options_for_select(@grouped_variables, params[:chart_variable], prompt: '--- Please select ---'))
+    = form_tag(@test, method: :get, class: 'query-form', id: 'histogram-form') do
+      = select_tag('chart_variable', grouped_options_for_select(@grouped_variables, params[:chart_variable], prompt: t(:prompt_label)))
       = submit_tag('Show', name: nil, class: 'button-primary')
 
     - if @histogram_data
@@ -90,16 +129,11 @@ h5 = t(:values)
             a.download Save
         .card-body style="position: relative; height:240px;"
 
-    javascript:
-      var histogramData = #{{ JSON.dump(@histogram_data) }};
-      if (histogramData) {
-        drawHistogram(histogramData[0], histogramData[1]);
-      }
-
-      var boxplotData = #{{ JSON.dump(@boxplot_data) }};
-      if (boxplotData) {
-        drawBoxplot(boxplotData);
-      }
+      javascript:
+        var histogramData = #{{ JSON.dump(@histogram_data) }};
+        if (histogramData) {
+          drawHistogram(histogramData[0], histogramData[1]);
+        }
 
 - else
   p.no-content No data.

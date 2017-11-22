@@ -8,8 +8,10 @@ class Test::Variable < ApplicationRecord
 
   as_enum :type, %i{string long double}, source: :data_type
 
-
+  #  ---- SCOPES ----
   default_scope { order(id: :asc) }
+  scope :not_strings, -> { where.not(id: strings) }
+
 
   def to_s
     name

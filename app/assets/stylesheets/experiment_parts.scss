@@ -35,6 +35,7 @@
 
 .add_fields:hover {
     background: #eee;
+    text-decoration: none;
 }
 
 .remove_fields {
@@ -74,3 +75,8 @@ h4.title {
     top: -50px;
     right: 0px;
 }
+
+#test_variables .add-link > a + a {
+    margin-left: 7px;
+}
+

@@ -19,8 +19,8 @@
     = f.fields_for :parts do |part|
       = render 'part_fields', f: part
     .links
-      = link_to_add_association(f, :parts) do
-        | add part
+      = link_to_add_association t(:add_part), f, :parts
+
   br
   .actions
     = f.submit class: 'button-primary'

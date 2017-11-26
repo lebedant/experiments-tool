@@ -27,8 +27,9 @@ class ExperimentsController < ApplicationController
   # GET /experiments/1.json
   def show
     add_breadcrumb "#{@experiment.name}", @experiment
-    # group by variable
-    @grouped_by_variable = @experiment.data.active.group_by(&:variable)
+
+    # boxplot form preparations
+    prepare_boxplot_form
 
     # Grouped select options for all variables (grouped by part)
     @grouped_variables = {}
@@ -36,24 +37,19 @@ class ExperimentsController < ApplicationController
       @grouped_variables[part.name] = part.variables.pluck(:name, :id)
     end
 
-    @target_vars = @experiment.variables.not_strings.pluck(:name).uniq
-    @filter_vars = @experiment.variables.strings.pluck(:name).uniq
-
     # Histogram chart for check data
     prepare_data_for_var(params[:chart_variable]) if params[:chart_variable].present?
 
-    # Boxplot chart
-    prepare_boxplot_data(
-      params[:target_var_name],
-      params[:filter_var_name],
-      params[:filter_var_values]
-    ) if params[:target_var_name].present? && params[:filter_var_name].present? && !params[:filter_var_values].blank?
+    # Boxplots hash
+    @boxplots = {}
 
-    @filter_values = {}
-
-    @filter_vars.each do |variable_name|
-      @filter_values[variable_name] = @experiment.json_data.pluck("data ->> '#{variable_name}'").uniq
-      @filter_values[variable_name] << "all"
+    @experiment.chart_definitions.each do |definition|
+      # Boxplot chart
+      @boxplots[definition.name.parameterize] = prepare_boxplot_data(
+                                        definition.target_variable,
+                                        definition.filter_variable,
+                                        definition.filter_variable_values
+                                       )
     end
 
     #
@@ -72,6 +68,7 @@ class ExperimentsController < ApplicationController
   # GET /experiments/new
   def new
     @experiment = Experiment.new(user: current_user)
+    @experiment.parts.build
     add_breadcrumb t(:new_experiment_breadcrumb), new_experiment_path
   end
 
@@ -193,6 +190,22 @@ class ExperimentsController < ApplicationController
 
   private
 
+    def prepare_boxplot_form
+      @definition = ChartDefinition.new(experiment_id: @experiment.id)
+      @target_vars = @experiment.variables.not_strings.pluck(:name).uniq
+      @filter_vars = @experiment.variables.strings.pluck(:name).uniq
+      @calculate_methods = [:log_transform, :normal_distribution, :binominal_distribution]
+
+      @filter_values = {}
+
+      @filter_vars.each do |variable_name|
+        @filter_values[variable_name] = @experiment.json_data
+                                                   .pluck("data ->> '#{variable_name}'")
+                                                   .uniq
+        @filter_values[variable_name] << "all"
+      end
+    end
+
     def prepare_data_for_var(variable_id)
       variable = Experiment::Variable.find(variable_id)
       # can't work with no data
@@ -216,14 +229,14 @@ class ExperimentsController < ApplicationController
       return if x_labels.empty?
 
       # labels from filter_variable
-      @boxplot_data = { labels: x_labels, datasets: [] }
+      boxplot_data = { labels: x_labels, datasets: [] }
       # for color
       i = 0
 
       @experiment.parts.each do |part|
         means,uppers,lowers = calculate_means_for(part, target_var, filter_var, filter_var_values)
 
-        @boxplot_data[:datasets] << {
+        boxplot_data[:datasets] << {
                             label: part.name, # legend name => part name
                             backgroundColor: colors[i],
                             data:  means,
@@ -231,6 +244,8 @@ class ExperimentsController < ApplicationController
                           }
         i += 1
       end
+
+      boxplot_data
     end
 
     def calculate_means_for(part, target_var, filter_var, filter_var_values)
@@ -292,7 +307,7 @@ class ExperimentsController < ApplicationController
           variables_attributes: [
             :id,
             :name,
-            :type,
+            :data_type,
             :repetition_count,
             :log_transform,
             :_destroy

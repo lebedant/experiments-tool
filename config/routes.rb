@@ -6,6 +6,7 @@ Rails.application.routes.draw do
 
   resources :experiment_variables
   resources :experiment_parts
+  resources :chart_definitions, only: [:create, :destroy]
 
   resources :experiments do
     member do

@@ -10,6 +10,9 @@ class Experiment::Part < ApplicationRecord
 
   validates_presence_of :name, :variables
   validates :name, uniqueness: { scope: :experiment, message: 'should be unique in Experiment context.' }
+  validates :repetition_count, numericality: { greater_than: 0 }
+
+  validates_associated :variables
 
   before_save :generate_access_token
 

@@ -35,7 +35,7 @@ en:
       experiment:
         one: Experiment
         other: Experiments
-      experiment_part: Part
+      experiment/part: Part
     attributes:
       experiment:
         name: Name
@@ -45,7 +45,7 @@ en:
         name: Name
         description: Description
         design_type: Design type
-        access_token: Token
+        access_token: Access token
 
   #####################################
   #               ENUMS               #
@@ -53,7 +53,7 @@ en:
   enums:
     type:
       string: 'Text'
-      double: 'Fraction'
+      double: 'Double'
       long:   'Integer'
     design:
       within_subject: 'Within Subject Design'
@@ -73,10 +73,19 @@ en:
   variable: Variable
   variable_plural: Variables
   values: Variables values
+  histogram_label: Check variables data
 
+  access_token: Access token
   label_new_experiment: New experiment
+  add_part: Add next part
+  add_variable: + variable
+  add_variable_time: Add "Time"
+  add_variable_error: Add error
+  add_variable_scale: + variable scale
 
-  prompt_label: '--- Please select ---'
+  add_chart_definition: Add chart
+
+  prompt_label: '--- Select ---'
   positive_skewed_data: Is data positive skewed?
   #####################################
   #         TITLE DESCRIPTIONS        #

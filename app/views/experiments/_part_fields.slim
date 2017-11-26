@@ -7,6 +7,9 @@
       .field
         = f.label :design_type
         = f.select :design, enum_option_pairs(Experiment::Part, :design), {}, {class: 'u-full-width'}
+      .field
+        = f.label :repetition_count
+        = f.text_field :repetition_count, type: "number", min: 1, max: 100, class: 'u-full-width'
     .eight.columns
       .field
         = f.label :description
@@ -20,8 +23,11 @@
     = f.fields_for :variables do |variable|
       = render 'variable_fields', f: variable
     .add-link
-      = link_to_add_association(f, :variables) do
-        | add variable
+      - prefill_variables.keys.each do |key|
+        = link_to_add_association t("add_variable_#{key}"), f, :variables, render_options: { locals: { prefill: prefill_variables[key] } }
 
 
 
+
+javascript:
+  window.prefillValues = #{{ JSON.dump(prefill_variables) }}

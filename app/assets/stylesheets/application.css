@@ -96,7 +96,7 @@ input[type="checkbox"] {
 }
 
 .flex-row > * + * {
-    margin-left: 20px;
+    margin-left: 10px;
 }
 
 .flex-row.baseline {
@@ -285,7 +285,6 @@ ul.errors li {
     border-left: 20px solid white;
     position: absolute; left: 0; top: 0;
 }
-
 
 #timeline ul li:first-child a,
 #timeline ul li:first-child span {

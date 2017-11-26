@@ -1,4 +1,3 @@
-
 .absolute-right.flex-row
   = link_to material_icon.get_app.md_24, experiment_path(@experiment, format: :json), title: t(:export_title)
   = link_to material_icon.content_copy.md_24, copy_experiment_path(@experiment), title: t(:duplicate_title)
@@ -31,109 +30,54 @@ h5 = t(:part_plural)
         p
           = "#{t(:variable_plural)}: [ #{part.variables_to_s} ]"
       .card-footer
-        label = t("experiment/part.access_token")
+        label = t(:access_token)
         input.u-full-width type="text" value=part.access_token readonly="true"
 br
 
-/ - prev_part = false
-/ .row
-/   - @grouped_by_variable.each do |variable, values|
-/     - part = variable.part
-/     .data
-/       - if part != prev_part
-/         strong = "#{variable.part}"
-/         br
-/       strong = "#{variable.name}: "
-/       span = values.map {|val| val.target.value }.join(', ')
-/     - prev_part = part
-
 h5 = t(:values)
 
-- if @grouped_by_variable.present?
+- if @experiment.json_data.present?
 
-  = form_tag(@experiment, method: :get, class: 'query-form', id: 'boxplot-from') do
-    label = t(:target_variable)
-    = select_tag('target_var_name', options_for_select(@target_vars, params[:target_var_name]), prompt: t(:prompt_label))
-
-    label = t(:filter_variable)
-    = select_tag('filter_var_name', options_for_select(@filter_vars, params[:filter_var_name]), prompt: t(:prompt_label))
-
-    .filter-values
-      label = t(:filter_variable_values)
-      #values
-        - @filter_vars.each do |name|
-          = select_tag('filter_var_values[]', options_for_select(@filter_values[name]), prompt: t(:prompt_label), id: "#{name}-options")
-      button.button#add-values-btn Add next value
-
-
-    label.form-check-label
-      = check_box_tag('logarithm', true, params[:logarithm])
-      = t(:positive_skewed_data)
-
+  //  ------------------ HISTOGRAM -----------------------------
+  h6 = t(:histogram_label)
+  = form_tag(@experiment, method: :get, class: 'query-form', id: 'histogram-form') do
+    = select_tag('chart_variable', grouped_options_for_select(@grouped_variables, params[:chart_variable], prompt: t(:prompt_label)))
     = submit_tag('Show', name: nil, class: 'button-primary')
 
+  - if @histogram_data
+    #histogram-container.card
+      == render partial: 'chart_settings', locals: { parent_id: 'histogram-container', chart_id: 'histogram' }
+      .card-header
+        strong Histogram
+        .card-actions
+          a.settings Settings
+          a.download Save
+      .card-body style="position: relative; height:240px;"
+
     javascript:
-      var filter_var_select = $('#filter_var_name');
-      function toggleOptions() {
-        var name = filter_var_select.val();
-        if (name != "") {
-          $('.filter-values').show();
-          // hide all
-          $("[id $= '-options']").hide();
-          // show only one
-          $(`#${name}-options`).show();
-        } else {
-          $('.filter-values').hide();
-        }
+      var histogramData = #{{ JSON.dump(@histogram_data) }};
+      if (histogramData) {
+        drawHistogram(histogramData[0], histogramData[1]);
       }
 
-      filter_var_select.change(toggleOptions);
-      toggleOptions();
+  //  ------------------ BOXPLOT FORM -----------------------------
+  = render partial: 'chart_definitions/form'
 
-      $('#add-values-btn').click(function(e) {
-        var name = filter_var_select.val();
-        var new_options = $(`#${name}-options`).clone();
-        new_options.val("");
-        $('#values').append(new_options);
-        return false;
-      });
-
-    - if @boxplot_data
-      #box-charts.card
-          == render partial: 'chart_settings', locals: { parent_id: 'box-charts', chart_id: 'boxplot' }
-          .card-header
-            strong Confidence intervals
-            .card-actions
-              a.settings Settings
-              a.download Save
-          .card-body style="position: relative; height:340px;"
-
-      javascript:
-        var boxplotData = #{{ JSON.dump(@boxplot_data) }};
-        if (boxplotData) {
-          drawBoxplot(boxplotData);
-        }
-
-    h5 Control variables data
-    = form_tag(@experiment, method: :get, class: 'query-form', id: 'histogram-form') do
-      = select_tag('chart_variable', grouped_options_for_select(@grouped_variables, params[:chart_variable], prompt: t(:prompt_label)))
-      = submit_tag('Show', name: nil, class: 'button-primary')
-
-    - if @histogram_data
-      #histogram-container.card
-        == render partial: 'chart_settings', locals: { parent_id: 'histogram-container', chart_id: 'histogram' }
+  //  ------------------ BOXPLOTS -----------------------------
+  - @boxplots.each do |name, boxplot_data|
+    .card id="parent-for-#{name}"
+        == render partial: 'chart_settings', locals: { parent_id: "parent-for-#{name}", chart_id: name }
         .card-header
-          strong Histogram
+          strong = name
           .card-actions
             a.settings Settings
             a.download Save
-        .card-body style="position: relative; height:240px;"
+        .card-body style="position: relative; height:340px;"
 
-      javascript:
-        var histogramData = #{{ JSON.dump(@histogram_data) }};
-        if (histogramData) {
-          drawHistogram(histogramData[0], histogramData[1]);
-        }
+    javascript:
+      var boxplotData = #{{ JSON.dump(boxplot_data) }};
+      drawBoxplot(boxplotData, "#{name}");
+
 
 - else
   p.no-content No data.

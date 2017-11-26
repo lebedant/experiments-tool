@@ -6,6 +6,7 @@ class Experiment < ApplicationRecord
   has_many :data, through: :parts, source: :data
   has_many :variables, through: :parts
   has_many :json_data, class_name: 'Experiment::JsonDatum'
+  has_many :chart_definitions
   belongs_to :user
   # Recursive association for action "Copy"
   has_many :children, class_name: 'Experiment', foreign_key: "copy_parent_id"
@@ -15,6 +16,8 @@ class Experiment < ApplicationRecord
   # VALIDATIONS
   validates_presence_of :name, :parts
   validates :name, uniqueness: true
+
+  validates_associated :parts
 
   # FILTERS (before/after)
   after_save :cascade_save_parts

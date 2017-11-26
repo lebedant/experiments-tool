@@ -4,13 +4,23 @@ class Experiment::Variable < ApplicationRecord
 
   validates_presence_of :name, :data_type
   validates :name, uniqueness: { scope: :part, message: "should be unique in Part context." }
-  validates :repetition_count, numericality: { greater_than: 0 }
 
-  as_enum :type, %i{string long double}, source: :data_type
+
+  STRING = 0
+  LONG = 1
+  DOUBLE = 2
+
+  ENUM = {
+    string: STRING,
+    long: LONG,
+    double: DOUBLE
+  }.freeze
+
+  as_enum :type, ENUM, source: :data_type
 
   #  ---- SCOPES ----
   default_scope { order(id: :asc) }
-  scope :not_strings, -> { where.not(id: strings) }
+  scope :not_strings, -> { where.not(data_type: STRING) }
 
 
   def to_s

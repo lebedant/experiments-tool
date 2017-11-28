@@ -2,10 +2,10 @@
 
 ## Quick start
 
-* gem install bundler
-* bundle install
-* rails db:migrate
-* rails s
+* `gem install bundler`
+* `bundle install`
+* `rails db:migrate`
+* `rails s`
 
 ## Requirements
 

@@ -1,24 +1,13 @@
-# README
+# Experiments tool - web service
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Quick start
 
-Things you may want to cover:
+* gem install bundler
+* bundle install
+* rails db:migrate
+* rails s
 
-* Ruby version
+## Requirements
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+* Ruby 2.4.0+
+* PostgreSQL database

@@ -2,10 +2,11 @@ class CiCalculator
   attr_reader :data, :variable, :confidence_level
 
 
-  def initialize(data, variable, confidence_level = 0.95)
+  def initialize(data, variable, precision = 3, confidence_level = 0.95)
     @data = data
     @variable = variable
     @confidence_level = confidence_level
+    @precision = precision
   end
 
   def alpha
@@ -53,6 +54,7 @@ class CiCalculator
 
 
   def mean_and_error
+    return [0.0, 0.0, 0.0] if @data.empty?
     # continious data
     if @variable.double?
       x = mean
@@ -66,6 +68,6 @@ class CiCalculator
     lower = x - delta
 
     # return
-    [x.round(3), upper.round(3), lower.round(3)]
+    [x.round(@precision), upper.round(@precision), lower.round(@precision)]
   end
 end

@@ -3,15 +3,12 @@ module Api
     class ExperimentDataController < ActionController::API
       respond_to :json
       before_action :ensure_json_request
-      before_action :find_experiment
-      before_action :check_state
-      before_action :find_participant, :check_params, only: :create
+      before_action :find_participant, :find_experiment, :check_state, :check_params, only: :create
       # :check_repetition_count,
 
       def register_participant
         participant_data = {
-          internal_id: SecureRandom.uuid,
-          experiment_id: @experiment.id
+          internal_id: SecureRandom.uuid
         }
 
         # add external_id to data if it's supplied
@@ -35,7 +32,12 @@ module Api
         end
 
         # Save to json table
-        Experiment::JsonDatum.create(experiment_id: @experiment.id, part_id: @current_part.id, data: variable_params)
+        Experiment::JsonDatum.create(
+          experiment_id: @experiment.id,
+          part_id: @current_part.id,
+          participant_id: @participant.id,
+          data: variable_params
+        )
 
         send_json_status('Ok', 200)
       end
@@ -92,12 +94,12 @@ module Api
       end
 
       def check_repetition_count
-        existing_data = Experiment::Datum.where(
-          variable_id: @variable.id,
+        existing_data = Experiment::JsonDatum.where(
+          part_id: @current_part.id,
           participant_id: @participant.id
         )
 
-        if (existing_data.size >= @variable.repetition_count)
+        if (existing_data.size >= @current_part.repetition_count)
           send_json_status('Variable repetition count is exceeded', 422)
         end
       end

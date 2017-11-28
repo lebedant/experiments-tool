@@ -1,6 +1,5 @@
 class Participant < ApplicationRecord
-  validates_presence_of :test_id
-  belongs_to :test
-  has_many :test_data, dependent: :destroy
+  has_many :experiment_data, dependent: :destroy
+  has_many :experiment_json_data, dependent: :destroy
 
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171126201750) do
+ActiveRecord::Schema.define(version: 20171128214135) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,8 +42,10 @@ ActiveRecord::Schema.define(version: 20171126201750) do
     t.bigint "part_id"
     t.bigint "experiment_id"
     t.jsonb "data"
+    t.bigint "participant_id"
     t.index ["experiment_id"], name: "index_experiment_json_data_on_experiment_id"
     t.index ["part_id"], name: "index_experiment_json_data_on_part_id"
+    t.index ["participant_id"], name: "index_experiment_json_data_on_participant_id"
   end
 
   create_table "experiment_parts", force: :cascade do |t|
@@ -88,10 +90,8 @@ ActiveRecord::Schema.define(version: 20171126201750) do
   create_table "participants", force: :cascade do |t|
     t.string "internal_id"
     t.string "external_id"
-    t.bigint "test_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["test_id"], name: "index_participants_on_test_id"
   end
 
   create_table "string_data", force: :cascade do |t|
@@ -118,5 +118,5 @@ ActiveRecord::Schema.define(version: 20171126201750) do
   end
 
   add_foreign_key "experiment_data", "participants"
-  add_foreign_key "participants", "experiments", column: "test_id"
+  add_foreign_key "experiment_json_data", "participants"
 end

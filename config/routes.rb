@@ -22,7 +22,7 @@ Rails.application.routes.draw do
   namespace :api, constraints: { format: 'json' } do
     namespace :v1 do
       post '/register_participant', to: 'experiment_data#register_participant', as: 'api_registration'
-      post '/test_data', to: 'experiment_data#create', as: 'api_test_data'
+      post '/save_data', to: 'experiment_data#create', as: 'api_test_data'
     end
   end
 end

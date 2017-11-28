@@ -83,7 +83,7 @@ function drawBoxplot(data, name, max) {
           yAxes: [{
             ticks: {
               max: max,
-              stepSize: max/10,
+              stepSize: max/15,
               beginAtZero:true
             }
           }]

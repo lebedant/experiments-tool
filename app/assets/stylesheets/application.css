@@ -118,6 +118,10 @@ input[type="checkbox"] {
     margin: 10px 0px;
 }
 
+#footer {
+    margin: 20px 0px;
+}
+
 .absolute-right {
     position: absolute;
     top: 5px;
@@ -208,7 +212,7 @@ ul.errors li {
 }
 
 .login {
-    width: 250px;
+    width: 300px;
 }
 
 /* ARROW BUTTON */
@@ -362,6 +366,10 @@ label.form-check-label {
     margin-bottom: 0;
     background-color: #f0f3f5;
     border-bottom: 1px solid #c2cfd6;
+}
+
+.card-header h2 {
+    margin-bottom: 0px;
 }
 
 .card-header .card-actions a:hover {

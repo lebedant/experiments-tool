@@ -10,13 +10,75 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171105215937) do
+ActiveRecord::Schema.define(version: 20171126201750) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "chart_queries", force: :cascade do |t|
+    t.string "name"
+    t.jsonb "params"
+    t.bigint "experiment_id"
+    t.index ["experiment_id"], name: "index_chart_queries_on_experiment_id"
+  end
+
   create_table "double_data", force: :cascade do |t|
     t.decimal "value"
+  end
+
+  create_table "experiment_data", force: :cascade do |t|
+    t.integer "target_id"
+    t.string "target_type"
+    t.bigint "participant_id"
+    t.bigint "variable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "delete_reason"
+    t.index ["participant_id"], name: "index_experiment_data_on_participant_id"
+    t.index ["variable_id"], name: "index_experiment_data_on_variable_id"
+  end
+
+  create_table "experiment_json_data", force: :cascade do |t|
+    t.bigint "part_id"
+    t.bigint "experiment_id"
+    t.jsonb "data"
+    t.index ["experiment_id"], name: "index_experiment_json_data_on_experiment_id"
+    t.index ["part_id"], name: "index_experiment_json_data_on_part_id"
+  end
+
+  create_table "experiment_parts", force: :cascade do |t|
+    t.string "access_token"
+    t.string "name"
+    t.string "description"
+    t.integer "design_type"
+    t.bigint "experiment_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "repetition_count", default: 1
+    t.index ["access_token"], name: "index_experiment_parts_on_access_token", unique: true
+    t.index ["experiment_id"], name: "index_experiment_parts_on_experiment_id"
+  end
+
+  create_table "experiment_variables", force: :cascade do |t|
+    t.integer "data_type"
+    t.string "name"
+    t.boolean "log_transform"
+    t.bigint "part_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "positive_value", default: 0
+    t.index ["part_id"], name: "index_experiment_variables_on_part_id"
+  end
+
+  create_table "experiments", force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "copy_parent_id"
+    t.string "state"
+    t.index ["user_id"], name: "index_experiments_on_user_id"
   end
 
   create_table "long_data", force: :cascade do |t|
@@ -34,48 +96,6 @@ ActiveRecord::Schema.define(version: 20171105215937) do
 
   create_table "string_data", force: :cascade do |t|
     t.string "value"
-  end
-
-  create_table "test_data", force: :cascade do |t|
-    t.integer "target_id"
-    t.string "target_type"
-    t.bigint "participant_id"
-    t.bigint "variable_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["participant_id"], name: "index_test_data_on_participant_id"
-    t.index ["variable_id"], name: "index_test_data_on_variable_id"
-  end
-
-  create_table "test_parts", force: :cascade do |t|
-    t.string "access_token"
-    t.string "name"
-    t.string "description"
-    t.integer "design_type"
-    t.bigint "test_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["access_token"], name: "index_test_parts_on_access_token", unique: true
-    t.index ["test_id"], name: "index_test_parts_on_test_id"
-  end
-
-  create_table "test_variables", force: :cascade do |t|
-    t.integer "data_type"
-    t.string "name"
-    t.boolean "log_transform"
-    t.bigint "part_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["part_id"], name: "index_test_variables_on_part_id"
-  end
-
-  create_table "tests", force: :cascade do |t|
-    t.string "name"
-    t.string "description"
-    t.bigint "user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_tests_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -97,6 +117,6 @@ ActiveRecord::Schema.define(version: 20171105215937) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "participants", "tests"
-  add_foreign_key "test_data", "participants"
+  add_foreign_key "experiment_data", "participants"
+  add_foreign_key "participants", "experiments", column: "test_id"
 end

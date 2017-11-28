@@ -43,13 +43,19 @@ class ExperimentsController < ApplicationController
     # Boxplots hash
     @boxplots = {}
 
-    @experiment.chart_definitions.each do |definition|
+    @experiment.chart_queries.each do |query|
+      @max = 0
+      query_data = prepare_boxplot_data(query.target_variable,
+                                        query.filter_variable,
+                                        query.filter_variable_values)
+
       # Boxplot chart
-      @boxplots[definition.name.parameterize] = prepare_boxplot_data(
-                                        definition.target_variable,
-                                        definition.filter_variable,
-                                        definition.filter_variable_values
-                                       )
+      @boxplots[query.name] = {
+        id: query.id,
+        name_code: query.name.parameterize,
+        data: query_data,
+        max: (@max + 1).round
+      }
     end
 
     #
@@ -191,7 +197,7 @@ class ExperimentsController < ApplicationController
   private
 
     def prepare_boxplot_form
-      @definition = ChartDefinition.new(experiment_id: @experiment.id)
+      @definition = ChartQuery.new(experiment_id: @experiment.id)
       @target_vars = @experiment.variables.not_strings.pluck(:name).uniq
       @filter_vars = @experiment.variables.strings.pluck(:name).uniq
       @calculate_methods = [:log_transform, :normal_distribution, :binominal_distribution]
@@ -235,12 +241,15 @@ class ExperimentsController < ApplicationController
 
       @experiment.parts.each do |part|
         means,uppers,lowers = calculate_means_for(part, target_var, filter_var, filter_var_values)
+        @max = uppers.max if @max < uppers.max
 
         boxplot_data[:datasets] << {
                             label: part.name, # legend name => part name
                             backgroundColor: colors[i],
+                            errorColor: 'rgba(128,128,128,0.8)',
                             data:  means,
-                            error: means.map{|m|  m / 10}
+                            uppers: uppers,
+                            lowers: lowers
                           }
         i += 1
       end
@@ -260,8 +269,9 @@ class ExperimentsController < ApplicationController
         scope = scope.pluck("data -> '#{target_var.name}'")
         # type casting
         data_array = target_var.long? ? scope.map(&:to_i) : scope.map(&:to_f)
+        calculator = CiCalculator.new(data_array, target_var)
         # calculate
-        mean,upper,lower = mean_and_error_for(data_array)
+        mean,upper,lower = calculator.mean_and_error
         # pushh to result arrays
         means  << mean
         uppers << upper
@@ -269,12 +279,6 @@ class ExperimentsController < ApplicationController
       end
       # return multiple values
       [means, uppers, lowers]
-    end
-
-    def mean_and_error_for(data)
-      mean  = data.sum / data.size
-      upper = mean + 2
-      lower = mean - 3
     end
 
     # ----------------------------------------

@@ -6,7 +6,7 @@ class Experiment < ApplicationRecord
   has_many :data, through: :parts, source: :data
   has_many :variables, through: :parts
   has_many :json_data, class_name: 'Experiment::JsonDatum'
-  has_many :chart_definitions
+  has_many :chart_queries
   belongs_to :user
   # Recursive association for action "Copy"
   has_many :children, class_name: 'Experiment', foreign_key: "copy_parent_id"

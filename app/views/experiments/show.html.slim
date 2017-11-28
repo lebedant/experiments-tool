@@ -61,22 +61,23 @@ h5 = t(:values)
       }
 
   //  ------------------ BOXPLOT FORM -----------------------------
-  = render partial: 'chart_definitions/form'
+  = render partial: 'chart_queries/form'
 
   //  ------------------ BOXPLOTS -----------------------------
-  - @boxplots.each do |name, boxplot_data|
-    .card id="parent-for-#{name}"
-        == render partial: 'chart_settings', locals: { parent_id: "parent-for-#{name}", chart_id: name }
+  - @boxplots.each do |name, boxplot|
+    .card id="parent-for-#{boxplot[:name_code]}"
+        == render partial: 'chart_settings', locals: { parent_id: "parent-for-#{boxplot[:name_code]}", chart_id: boxplot[:name_code] }
         .card-header
           strong = name
           .card-actions
             a.settings Settings
             a.download Save
+            = link_to 'Del', chart_query_path(boxplot[:id]), method: :delete, class: 'delete'
         .card-body style="position: relative; height:340px;"
 
     javascript:
-      var boxplotData = #{{ JSON.dump(boxplot_data) }};
-      drawBoxplot(boxplotData, "#{name}");
+      var boxplotData = #{{ JSON.dump(boxplot[:data]) }};
+      drawBoxplot(boxplotData, "#{boxplot[:name_code]}", #{boxplot[:max]});
 
 
 - else

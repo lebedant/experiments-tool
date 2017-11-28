@@ -56,6 +56,8 @@ gem 'jquery-ui-rails'
 
 gem 'histogram'
 
+gem 'distribution'
+
 # OTHER
 gem 'breadcrumbs_on_rails'
 gem 'simple_token_authentication', '~> 1.0'

@@ -86,6 +86,7 @@ GEM
     concurrent-ruby (1.0.5)
     devise-async (0.7.0)
       devise (>= 2.2)
+    distribution (0.7.3)
     erubi (1.6.0)
     erubis (2.7.0)
     execjs (2.7.0)
@@ -255,6 +256,7 @@ DEPENDENCIES
   coffee-rails (~> 4.2)
   devise!
   devise-async
+  distribution
   erubis
   histogram
   jbuilder (~> 2.5)

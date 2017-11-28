@@ -83,7 +83,7 @@ en:
   add_variable_error: Add error
   add_variable_scale: + variable scale
 
-  add_chart_definition: Add chart
+  add_chart_query: Add chart
 
   prompt_label: '--- Select ---'
   positive_skewed_data: Is data positive skewed?

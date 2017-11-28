@@ -725,11 +725,11 @@ for (var func in conversions) {
   // export rgb2hsl and ["rgb"]["hsl"]
   convert[from] = convert[from] || {};
 
-  convert[from][to] = convert[func] = (function(func) { 
+  convert[from][to] = convert[func] = (function(func) {
     return function(arg) {
       if (typeof arg == "number")
         arg = Array.prototype.slice.call(arguments);
-      
+
       var val = conversions[func](arg);
       if (typeof val == "string" || val === undefined)
         return val; // keyword
@@ -757,12 +757,12 @@ Converter.prototype.routeSpace = function(space, args) {
    }
    // color.rgb(10, 10, 10)
    if (typeof values == "number") {
-      values = Array.prototype.slice.call(args);        
+      values = Array.prototype.slice.call(args);
    }
 
    return this.setValues(space, values);
 };
-  
+
 /* Set the values for a space, invalidating cache */
 Converter.prototype.setValues = function(space, values) {
    this.space = space;
@@ -2116,9 +2116,9 @@ module.exports = function(Chart) {
 
 	Chart.defaults.barError = helpers.extend(Chart.defaults.bar, {
 		errorDir: "both",
-		errorStrokeWidth: 1,
+		errorStrokeWidth: 2,
 		errorCapWidth: 0.75,
-		errorColor: null
+		errorColor: 'rgba(54, 162, 235, 1)'
 	});
 
 	Chart.controllers.barError = Chart.controllers.bar.extend({
@@ -2130,13 +2130,13 @@ module.exports = function(Chart) {
 			//call Super
 			Chart.controllers.bar.prototype.addElements.call(this);
 
-			if (this.getDataset().error) {
-				this.getDataset().metaError = new Array(this.getDataset().error.length);
+			if (this.getDataset().uppers) {
+				this.getDataset().metaError = new Array(this.getDataset().uppers.length);
 			} else {
 				this.getDataset().metaError = new Array();
 			}
 
-			helpers.each(this.getDataset().error, function(value, index) {
+			helpers.each(this.getDataset().uppers, function(value, index) {
 				this.getDataset().metaError[index] = new Chart.elements.ErrorBar({
 					_chart: this.chart.chart,
 					_datasetIndex: this.index,
@@ -2149,7 +2149,7 @@ module.exports = function(Chart) {
 			Chart.controllers.bar.prototype.addElementAndReset.call(this, index);
 			var rectangle = this.getDataset().metaData[index];
 
-			if (this.getDataset().error && this.getDataset().error[index]) {
+			if (this.getDataset().uppers && this.getDataset().uppers[index]) {
 
 				var errorBar = new Chart.elements.ErrorBar({
 					_chart: this.chart.chart,
@@ -2169,8 +2169,8 @@ module.exports = function(Chart) {
 			var numBars = this.getBarCount();
 
 			//ensure that there are not more error bars than data
-			if (this.getDataset().error) {
-				this.getDataset().error = this.getDataset().error.slice(0, this.getDataset().metaData.length);
+			if (this.getDataset().uppers) {
+				this.getDataset().uppers = this.getDataset().uppers.slice(0, this.getDataset().metaData.length);
 			}
 			if (this.getDataset().metaError) {
 				this.getDataset().metaError = this.getDataset().metaError.slice(0, this.getDataset().metaData.length);
@@ -2181,7 +2181,7 @@ module.exports = function(Chart) {
 				//update the bar
 				this.updateElement(rectangle, index, reset, numBars);
 
-				if (this.getDataset().error) {
+				if (this.getDataset().uppers) {
 					if (index in this.getDataset().metaError) {
 						errorBar = this.getDataset().metaError[index];
 						this.updateErrorBar(errorBar, rectangle, index, reset, numBars);
@@ -2192,7 +2192,6 @@ module.exports = function(Chart) {
 		},
 
 		updateErrorBar: function(errorBar, rectangle, index, reset, numBars) {
-
 			var xScale = this.getScaleForId(this.getDataset().xAxisID);
 			var yScale = this.getScaleForId(this.getDataset().yAxisID);
 
@@ -2227,7 +2226,8 @@ module.exports = function(Chart) {
 		},
 
 		calculateErrorBarTop: function(index, datasetIndex) {
-			var value = this.getDataset().data[index] + this.getDataset().error[index],
+      // var value = this.getDataset().data[index] + this.getDataset().error[index],
+			var value = this.getDataset().uppers[index],
 				yScale = this.getScaleForId(this.getDataset().yAxisID);
 
 			//TODO: still need to worry about stacked bar chart.
@@ -2235,7 +2235,8 @@ module.exports = function(Chart) {
 		},
 
 		calculateErrorBarBottom: function(index, datasetIndex) {
-			var value = this.getDataset().data[index] - this.getDataset().error[index],
+      // var value = this.getDataset().data[index] - this.getDataset().error[index],
+			var value = this.getDataset().lowers[index],
 				yScale = this.getScaleForId(this.getDataset().yAxisID);
 
 			//TODO: still need to worry about stacked bar chart.
@@ -2246,7 +2247,7 @@ module.exports = function(Chart) {
 			Chart.controllers.bar.prototype.draw.call(this, ease);
 			var easingDecimal = ease || 1;
 			helpers.each(this.getDataset().metaError, function(errorBar, index) {
-				var e = this.getDataset().error[index];
+				var e = this.getDataset().uppers[index];
 				if (e !== null && e !== undefined && !isNaN(e)) {
 					errorBar.transition(easingDecimal).draw();
 				}
@@ -7670,7 +7671,7 @@ module.exports = function(Chart) {
 			if (vm.title.length) {
 				ctx.textAlign = vm._titleAlign;
 				ctx.textBaseline = "top";
-				
+
 				var titleColor = helpers.color(vm.titleColor);
 				ctx.fillStyle = titleColor.alpha(opacity * titleColor.alpha()).rgbString();
 				ctx.font = helpers.fontString(vm.titleFontSize, vm._titleFontStyle, vm._titleFontFamily);
@@ -7737,7 +7738,7 @@ module.exports = function(Chart) {
 
 				ctx.textAlign = vm._footerAlign;
 				ctx.textBaseline = "top";
-				
+
 				var footerColor = helpers.color(vm.footerColor);
 				ctx.fillStyle = footerColor.alpha(opacity * footerColor.alpha()).rgbString();
 				ctx.font = helpers.fontString(vm.footerFontSize, vm._footerFontStyle, vm._footerFontFamily);
@@ -8303,7 +8304,7 @@ module.exports = function(Chart) {
 				[rightX, vm.base]
 			];
 
-			// Find first (starting) corner with fallback to 'bottom' 
+			// Find first (starting) corner with fallback to 'bottom'
 			var borders = ['bottom', 'left', 'top', 'right'];
 			var startCorner = borders.indexOf(vm.borderSkipped, 0);
 			if (startCorner === -1)
@@ -8372,7 +8373,7 @@ module.exports = function(Chart) {
 	};
 
 	var DatasetScale = Chart.Scale.extend({
-		// Implement this so that 
+		// Implement this so that
 		determineDataLimits: function() {
 			this.minIndex = 0;
 			this.maxIndex = this.chart.data.labels.length;
@@ -9292,7 +9293,7 @@ module.exports = function(Chart) {
 						}
 						// Extra 3px out for some label spacing
 						var pointLabelPosition = this.getPointPosition(i, this.getDistanceFromCenterForValue(this.options.reverse ? this.min : this.max) + 5);
-						
+
 						var pointLabelFontColor = helpers.getValueOrDefault(this.options.pointLabels.fontColor, Chart.defaults.global.defaultFontColor);
 						var pointLabelFontSize = helpers.getValueOrDefault(this.options.pointLabels.fontSize, Chart.defaults.global.defaultFontSize);
 						var pointLabeFontStyle = helpers.getValueOrDefault(this.options.pointLabels.fontStyle, Chart.defaults.global.defaultFontStyle);

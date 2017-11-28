@@ -55,7 +55,7 @@ function drawHistogram(caption, data) {
   ctx.data('chart-id', myChart.id);
 }
 
-function drawBoxplot(data, name) {
+function drawBoxplot(data, name, max) {
   var parent = $(`#parent-for-${name}`);
   var ctx = $(`<canvas id='${name}'></canvas>`);
   parent.find('.card-body').append(ctx);
@@ -66,9 +66,24 @@ function drawBoxplot(data, name) {
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        tooltips: {
+          callbacks: {
+            label: function(tooltipItem, data) {
+              return `Mean: ${tooltipItem.yLabel}`;
+            },
+            afterLabel: function(tooltipItem, data) {
+              debugger;
+              var str = "Upper: " + data.datasets[tooltipItem.datasetIndex].uppers[tooltipItem.index] + "\n";
+              str += "Lower: " + data.datasets[tooltipItem.datasetIndex].lowers[tooltipItem.index];
+              return str;
+            }
+          }
+        },
         scales: {
           yAxes: [{
             ticks: {
+              max: max,
+              stepSize: max/10,
               beginAtZero:true
             }
           }]

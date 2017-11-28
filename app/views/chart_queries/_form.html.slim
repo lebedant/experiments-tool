@@ -1,0 +1,52 @@
+= form_for @definition do |f|
+  = f.hidden_field :experiment_id
+
+  = f.label :name
+  = f.text_field :name
+
+  = f.label :target_variable
+  .flex-row
+    = f.select(:target_variable, options_for_select(@target_vars), prompt: t(:prompt_label))
+    = f.select(:calculate_method, options_for_select(@calculate_methods), prompt: t(:prompt_label))
+
+  .flex-row
+    div
+      = f.label :filter_variable
+      = f.select(:filter_variable, options_for_select(@filter_vars), prompt: t(:prompt_label))
+
+    .filter-values
+      = f.label :filter_variable_values
+      #values.flex-row
+        - @filter_vars.each do |name|
+          = select_tag('chart_query[filter_variable_values][]', options_for_select(@filter_values[name]), id: "#{name}-options")
+
+      button.button#add-values-btn Add next value
+
+  = submit_tag(t(:add_chart_query), name: nil, class: 'button-primary')
+
+javascript:
+  var filter_var_select = $('#chart_query_filter_variable');
+
+  function toggleOptions() {
+    var name = filter_var_select.val();
+    if (name != "") {
+      $('.filter-values').show();
+      // hide all
+      $("[id $= '-options']").hide();
+      // show only one
+      $(`#${name}-options`).show();
+    } else {
+      $('.filter-values').hide();
+    }
+  }
+
+  filter_var_select.change(toggleOptions);
+  toggleOptions();
+
+  $('#add-values-btn').click(function(e) {
+    var name = filter_var_select.val();
+    var new_options = $(`#${name}-options`).clone();
+    // new_options.val("");
+    $('#values').append(new_options);
+    return false;
+  });

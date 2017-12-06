@@ -1,9 +1,8 @@
 GIT
-  remote: https://github.com/gogovan/devise.git
-  revision: 931ae3985872ea1f0039cd3a749779c0023a622a
-  branch: rails-5.1
+  remote: https://github.com/plataformatec/devise.git
+  revision: 451ba5362b84ff18a31ea1b3251137128a6b1beb
   specs:
-    devise (4.2.0)
+    devise (4.3.0)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
       railties (>= 4.1.0, < 5.2)

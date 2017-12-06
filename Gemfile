@@ -40,8 +40,7 @@ gem 'rack-cors', require: 'rack/cors'
 gem 'pg'
 
 # DEVISE
-gem 'devise', github: 'plataformatec/devise'
-# git: 'https://github.com/gogovan/devise.git', branch: 'rails-5.1'
+gem 'devise', git: 'https://github.com/plataformatec/devise.git'
 gem 'erubis'
 gem 'devise-async'
 

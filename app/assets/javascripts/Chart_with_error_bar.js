@@ -2116,7 +2116,7 @@ module.exports = function(Chart) {
 
 	Chart.defaults.barError = helpers.extend(Chart.defaults.bar, {
 		errorDir: "both",
-		errorStrokeWidth: 2,
+		errorStrokeWidth: 1,
 		errorCapWidth: 0.75,
 		errorColor: 'rgba(54, 162, 235, 1)'
 	});

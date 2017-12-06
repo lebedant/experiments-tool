@@ -18,10 +18,13 @@ module Api
       end
 
       def create
-        variable_params.each do |name, value|
-          variable = find_variable_by(name)
+        # [ {name: "age", value: "77"}, ..., ... ]
+        flat_json = {}
+
+        variable_params.each do |variable_row|
+          variable = find_variable_by(variable_row[:name])
           recordClass = "#{variable.type}_datum".classify.constantize
-          record = recordClass.create(value: value)
+          record = recordClass.create(value: variable_row[:value])
 
           datum = Experiment::Datum.create(
             target_id: record.id,
@@ -29,6 +32,8 @@ module Api
             participant_id: @participant.id,
             variable_id: variable.id
           )
+
+          flat_json[variable_row[:name]] = variable_row[:value]
         end
 
         # Save to json table
@@ -36,7 +41,7 @@ module Api
           experiment_id: @experiment.id,
           part_id: @current_part.id,
           participant_id: @participant.id,
-          data: variable_params
+          data: flat_json
         )
 
         send_json_status('Ok', 200)
@@ -81,11 +86,11 @@ module Api
       def check_params
         # check existance
         if !params[:variable_values]
-          return send_json_status('Variable values are missing', 422)
+          return send_json_status('variable_values are missing', 422)
         end
         # check type (must be Hash structure)
-        unless variable_params.is_a? Hash
-          return send_json_status('Variable_values must be Hash', 422)
+        unless variable_params.is_a? Array
+          return send_json_status('variable_values must be Array', 422)
         end
         # cjeck Hash size
         if variable_params.size != @current_part.variables.count
@@ -105,7 +110,7 @@ module Api
       end
 
       def variable_params
-        params.require(:variable_values).permit(params[:variable_values].keys).to_h
+        params.permit(variable_values: [:name, :value]).to_h[:variable_values]
       end
 
       def ensure_json_request

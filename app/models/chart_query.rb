@@ -5,5 +5,5 @@ class ChartQuery < ActiveRecord::Base
   belongs_to :experiment
   validates :name, uniqueness: true
 
-  # default_scope { order(id: :desc) }
+  default_scope { order(id: :desc) }
 end

@@ -1,12 +1,17 @@
 class CiCalculator
-  attr_reader :data, :variable, :confidence_level
+  attr_reader :data, :variable, :confidence_level, :orig_data
 
 
-  def initialize(data, variable, precision = 3, confidence_level = 0.95)
+  def initialize(data, variable, calculate_method, precision = 3, confidence_level = 0.95)
     @data = data
     @variable = variable
     @confidence_level = confidence_level
     @precision = precision
+    @calculate_method = calculate_method.to_i
+
+    # if log => transform data
+    @orig_data = data
+    @data = @data.select{|item| item > 0.0 }.map{|item| Math.log(item)} if @calculate_method == Experiment::Variable::LOG_TRANSFORM
   end
 
   def alpha
@@ -55,17 +60,25 @@ class CiCalculator
 
   def mean_and_error
     return [0.0, 0.0, 0.0] if @data.empty?
+
     # continious data
     if @variable.double?
       x = mean
       delta = t_value * (standard_deviation / Math.sqrt(n))
     else
       x = adj_proportion
-      delta = z_value * Math.sqrt((adj_proportion*(1 - adj_proportion))/adj_n)
+      delta = z_value * Math.sqrt((adj_proportion * (1 - adj_proportion))/adj_n)
     end
 
     upper = x + delta
     lower = x - delta
+
+    # if log transfor data back
+    if @calculate_method == Experiment::Variable::LOG_TRANSFORM
+      x = Math.exp(x)
+      upper = Math.exp(upper)
+      lower = Math.exp(lower)
+    end
 
     # return
     [x.round(@precision), upper.round(@precision), lower.round(@precision)]

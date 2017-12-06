@@ -21,10 +21,12 @@
   h5 = t(:variable_plural)
   #test_variables
     = f.fields_for :variables do |variable|
-      = render 'variable_fields', f: variable
+      = render 'variable_fields', f: variable, prefill: {}
     .add-link
+      span.margin = t(:add_label)
       - prefill_variables.keys.each do |key|
-        = link_to_add_association t("add_variable_#{key}"), f, :variables, render_options: { locals: { prefill: prefill_variables[key] } }
+        = link_to_add_association t("variable_#{key}"), f, :variables, render_options: { locals: { prefill: prefill_variables[key] } }
+      = link_to_add_association t("variable_custom"), f, :variables, render_options: { locals: { prefill: {} } }
 
 
 

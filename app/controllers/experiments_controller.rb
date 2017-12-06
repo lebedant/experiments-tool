@@ -37,6 +37,8 @@ class ExperimentsController < ApplicationController
       @grouped_variables[part.name] = part.variables.pluck(:name, :id)
     end
 
+    @string_var_ids = @experiment.variables.strings.pluck(:id)
+
     # Histogram chart for check data
     prepare_data_for_var(params[:chart_variable]) if params[:chart_variable].present?
 
@@ -45,16 +47,16 @@ class ExperimentsController < ApplicationController
 
     @experiment.chart_queries.each do |query|
       @max = 0
-      query_data = prepare_boxplot_data(query.target_variable,
-                                        query.filter_variable,
-                                        query.filter_variable_values)
+      plot_data,raw_data,header_row = prepare_boxplot_data(query)
 
       # Boxplot chart
       @boxplots[query.name] = {
         id: query.id,
         name_code: query.name.parameterize,
-        data: query_data,
-        max: (@max + 1).round
+        data: plot_data,
+        max: (@max + 50).round,
+        raw_data: raw_data,
+        header_row: header_row
       }
     end
 
@@ -200,13 +202,14 @@ class ExperimentsController < ApplicationController
       @definition = ChartQuery.new(experiment_id: @experiment.id)
       @target_vars = @experiment.variables.not_strings.pluck(:name).uniq
       @filter_vars = @experiment.variables.strings.pluck(:name).uniq
-      @calculate_methods = [:log_transform, :normal_distribution, :binominal_distribution]
+      @calculate_methods = Experiment::Variable::METHODS.map{ |key, value| [t(key), value] }
 
       @filter_values = {}
 
       @filter_vars.each do |variable_name|
         @filter_values[variable_name] = @experiment.json_data
                                                    .pluck("data ->> '#{variable_name}'")
+                                                   .compact
                                                    .uniq
         @filter_values[variable_name] << "all"
       end
@@ -214,25 +217,40 @@ class ExperimentsController < ApplicationController
 
     def prepare_data_for_var(variable_id)
       variable = Experiment::Variable.find(variable_id)
-      # can't work with no data
+      # can't work without data
       if variable.data.blank?
-        # flash[:error] = 'This variable has no data yet.'
         return
       end
+      if variable.string?
+        @raw_data = variable.data
+        pairs = @raw_data.group_by(&:itself).map { |k,v| [k, v.count] }.to_h
+      else
+        @raw_data = variable.long? ? variable.data.map(&:to_i) : variable.data.map(&:to_f)
+        settings = {}
+        settings[:bin_width] = params[:step_size].to_i if params[:step_size].present?
+        settings[:min] = params[:min].to_i if params[:min].present?
+        settings[:max] = params[:max].to_i if params[:max].present?
+        bar_count = params[:bar_count].to_i if params[:bar_count].present?
+
+        x,y = @raw_data.histogram(bar_count, settings)
+        x.map!{|item| item.round(3)}
+        pairs = x.zip(y)
+      end
       # histogram plot
-      x,y = variable.data.histogram(bin_width: 1.0)
-      pairs = x.zip(y)
       @histogram_data = [variable.name]
-      @histogram_data << pairs.map { |value, count| { x: value.round(3), y: count } }
+      @histogram_data << pairs.map { |value, count| { x: value, y: count } }
     end
 
-    def prepare_boxplot_data(target_var_name, filter_var_name, filter_var_values)
-      target_var = Experiment::Variable.where(name: target_var_name).first
-      filter_var = Experiment::Variable.where(name: filter_var_name).first
+    def prepare_boxplot_data(query)
+      target_var = Experiment::Variable.where(name: query.target_variable).first
+      filter_var = Experiment::Variable.where(name: query.filter_variable).first
 
-      x_labels = filter_var_values.reject(&:blank?).map { |value| "#{filter_var.name} #{value}" }
+      x_labels = query.filter_variable_values.reject(&:blank?)
+                                               .map { |value| "#{filter_var.name} #{value}" }
 
       return if x_labels.empty?
+
+      raw_data = []
 
       # labels from filter_variable
       boxplot_data = { labels: x_labels, datasets: [] }
@@ -240,38 +258,59 @@ class ExperimentsController < ApplicationController
       i = 0
 
       @experiment.parts.each do |part|
-        means,uppers,lowers = calculate_means_for(part, target_var, filter_var, filter_var_values)
+        next unless part.variables.pluck(:name).include? target_var.name
+
+        means,uppers,lowers = calculate_means_for(
+                                                   part,
+                                                   target_var,
+                                                   filter_var,
+                                                   query.filter_variable_values,
+                                                   query.calculate_method
+                                                 )
         @max = uppers.max if @max < uppers.max
 
         boxplot_data[:datasets] << {
                             label: part.name, # legend name => part name
                             backgroundColor: colors[i],
                             errorColor: 'rgba(128,128,128,0.8)',
+                            errorStrokeWidth: 1,
+                            errorCapWidth: 0.5,
                             data:  means,
                             uppers: uppers,
                             lowers: lowers
                           }
         i += 1
+
+        tmp_ar = []
+        means.size.times do |ind|
+          tmp_ar << "#{means[ind]}(#{lowers[ind]}, #{uppers[ind]})"
+        end
+
+        raw_data << [part.name, tmp_ar].flatten
       end
 
-      boxplot_data
+      [boxplot_data, raw_data, x_labels]
     end
 
-    def calculate_means_for(part, target_var, filter_var, filter_var_values)
+    def calculate_means_for(part, target_var, filter_var, filter_var_values, calculate_method)
       means = []
       uppers = []
       lowers = []
 
       filter_var_values.each do |value|
         next if value.empty?
+
         scope = part.json_data
         scope = scope.where("data ->> '#{filter_var.name}' = ?", value.to_s) unless value == "all"
         scope = scope.pluck("data -> '#{target_var.name}'")
+
         # type casting
         data_array = target_var.long? ? scope.map(&:to_i) : scope.map(&:to_f)
-        calculator = CiCalculator.new(data_array, target_var)
+
+        calculator = CiCalculator.new(data_array, target_var, calculate_method)
         # calculate
         mean,upper,lower = calculator.mean_and_error
+
         # pushh to result arrays
         means  << mean
         uppers << upper
@@ -313,7 +352,7 @@ class ExperimentsController < ApplicationController
             :name,
             :data_type,
             :repetition_count,
-            :log_transform,
+            :calculation_method,
             :_destroy
           ]
         ]

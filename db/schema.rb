@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171128214135) do
+ActiveRecord::Schema.define(version: 20171204190609) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -64,11 +64,11 @@ ActiveRecord::Schema.define(version: 20171128214135) do
   create_table "experiment_variables", force: :cascade do |t|
     t.integer "data_type"
     t.string "name"
-    t.boolean "log_transform"
     t.bigint "part_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "positive_value", default: 0
+    t.integer "calculation_method"
     t.index ["part_id"], name: "index_experiment_variables_on_part_id"
   end
 

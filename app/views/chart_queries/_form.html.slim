@@ -2,17 +2,17 @@
   = f.hidden_field :experiment_id
 
   = f.label :name
-  = f.text_field :name
+  = f.text_field :name, required: true
 
   = f.label :target_variable
   .flex-row
-    = f.select(:target_variable, options_for_select(@target_vars), prompt: t(:prompt_label))
-    = f.select(:calculate_method, options_for_select(@calculate_methods), prompt: t(:prompt_label))
+    = f.select(:target_variable, options_for_select(@target_vars))
+    = f.select(:calculate_method, options_for_select(@calculate_methods))
 
   .flex-row
     div
       = f.label :filter_variable
-      = f.select(:filter_variable, options_for_select(@filter_vars), prompt: t(:prompt_label))
+      = f.select(:filter_variable, options_for_select(@filter_vars))
 
     .filter-values
       = f.label :filter_variable_values
@@ -20,7 +20,7 @@
         - @filter_vars.each do |name|
           = select_tag('chart_query[filter_variable_values][]', options_for_select(@filter_values[name]), id: "#{name}-options")
 
-      button.button#add-values-btn Add next value
+      = link_to material_icon.add_box.md_24, '#', id: 'add-values-btn'
 
   = submit_tag(t(:add_chart_query), name: nil, class: 'button-primary')
 
@@ -33,8 +33,10 @@ javascript:
       $('.filter-values').show();
       // hide all
       $("[id $= '-options']").hide();
+      $("[id $= '-options']").prop("disabled", true);
       // show only one
       $(`#${name}-options`).show();
+      $(`#${name}-options`).prop("disabled", false);
     } else {
       $('.filter-values').hide();
     }

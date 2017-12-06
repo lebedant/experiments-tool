@@ -10,13 +10,24 @@ class Experiment::Variable < ApplicationRecord
   LONG = 1
   DOUBLE = 2
 
-  ENUM = {
+  TYPES = {
     string: STRING,
     long: LONG,
     double: DOUBLE
   }.freeze
 
-  as_enum :type, ENUM, source: :data_type
+  LOG_TRANSFORM = 0
+  NORMAL_DIST = 1
+  BINOMIAL_DIST = 2
+
+  METHODS = {
+    log_transformation: LOG_TRANSFORM,
+    normal_distribution: NORMAL_DIST,
+    binomial_distribution: BINOMIAL_DIST
+  }.freeze
+
+  as_enum :type, TYPES, source: :data_type
+  as_enum :method, METHODS, source: :calculation_method
 
   #  ---- SCOPES ----
   default_scope { order(id: :asc) }
@@ -32,7 +43,7 @@ class Experiment::Variable < ApplicationRecord
   end
 
   def data
-    values.map { |value| value.target.value.to_f }
+    values.map { |value| value.target.value }
   end
 
 end

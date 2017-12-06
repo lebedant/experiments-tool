@@ -21,6 +21,20 @@
  *= require jquery-ui/theme
  */
 
+.margin {
+    margin: 0px 10px;
+}
+
+a.button:hover {
+    text-decoration: none;
+}
+
+pre {
+    white-space: pre-wrap;
+    background: hsla(204, 11%, 90%, 0.51);
+    font-size: 12px !important;
+}
+
 h5 {
     border-bottom: 1px solid #ddd;
 }
@@ -93,10 +107,19 @@ input[type="checkbox"] {
     flex-wrap: wrap;
     -webkit-flex-wrap: wrap;
     overflow: hidden;
+    margin-bottom: 10px;
 }
 
 .flex-row > * + * {
     margin-left: 10px;
+}
+
+form.flex-row > * + * {
+    margin-left: 0px;
+}
+
+.number-field {
+    width: 80px;
 }
 
 .flex-row.baseline {
@@ -108,9 +131,22 @@ input[type="checkbox"] {
     align-items: center;
 }
 
+.flex-row.between {
+    justify-content: space-between;
+}
+
+.flex-row.items-end {
+    align-items: flex-end;
+}
+
+.flex-row > .col + .col {
+    margin-left: 0px;
+}
+
 .flex-row .col {
-  flex: 1;
+  flex: 0 48%;
   overflow-y: auto;
+  box-sizing: border-box;
 }
 
 #content {
@@ -317,12 +353,22 @@ ul.errors li {
     margin-right: 10px;
 }
 
+input:disabled {
+    color: gray;
+    background: #eee !important;
+}
+
 
 /* GRAPH UI OPTIONS */
 
 .popover-content select,
-.popover-content input[type='text'] {
+.popover-content input[type='text'],
+.popover-content input[type='number'] {
     height: 28px;
+}
+
+.y-step-size {
+    width: 80px;
 }
 
 label.form-check-label {
@@ -414,9 +460,8 @@ label.form-check-label {
 /*  POPOVER */
 
 .popover {
-    top: -235px;
-    /*right: -68px;*/
-    left: 665px;
+    top: -220px;
+    left: 735px;
     max-width: 295px;
 }
 

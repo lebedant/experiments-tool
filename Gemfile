@@ -36,8 +36,6 @@ gem 'jquery-rails'
 
 gem 'rack-cors', require: 'rack/cors'
 
-gem 'rails-erd', group: :development
-
 # DB
 gem 'pg'
 
@@ -77,6 +75,7 @@ group :development, :test do
   # Adds support for Capybara system test and selenium driver
   gem 'capybara', '~> 2.13.0'
   gem 'selenium-webdriver'
+  gem 'rails-erd'
 end
 
 group :development do

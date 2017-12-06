@@ -19,13 +19,9 @@
       label.form-check-label
         input.show-y-grid type='checkbox' checked="checked"
         | Show Y axes
-    .title-options
-      label.form-check-label
-        input.show-title type='checkbox'
-        | Show title
-      .details
-        label Title text
-        input.title-text type='text'
+    .max-tick.flex-row.baseline
+      label Y axe step size
+      input.y-step-size type='number'
 
 
   javascript:
@@ -46,7 +42,9 @@
       var popoverCard = parentContainer.find('.popover');
 
       var selectPosition = parentContainer.find('.position');
-      var titleInput = parentContainer.find('.title-text')
+      var titleInput = parentContainer.find('.title-text');
+
+      var yStepSize = parentContainer.find('.y-step-size');
 
       showXGrid.click(function(e) {
         chart.options.scales.xAxes[0].gridLines.display = $(this).is(":checked");
@@ -87,6 +85,16 @@
 
       settingsButton.click(function(e) {
         popoverCard.toggle();
+      });
+
+      yStepSize.on('keyup', function(e) {
+        chart.options.scales.yAxes[0].ticks.stepSize = Number($(this).val());
+        chart.update();
+      });
+
+      // Toggle for raw data
+      $('#data-toggle-for-'+canvasId).click(function(){
+        $('#raw-data-for-'+canvasId).toggle();
       });
 
     });

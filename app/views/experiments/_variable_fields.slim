@@ -1,12 +1,19 @@
 .nested-fields.variable
   .field
-    = f.label :data_type
-    = f.select :data_type, enum_option_pairs(Experiment::Variable, :type, true),{selected: is_need_prefill(f.object, :data_type) ? prefill[:data_type] : f.object.data_type}, { class: 'u-full-width' }
-  .field
     = f.label :variable_name
-    = f.text_field :name, class: 'u-full-width', value: is_need_prefill(f.object, :name) ? prefill[:name] : f.object.name
+    = f.text_field :name, class: 'u-full-width', value: object_value(f.object, :name, prefill)
   .field
-    = f.check_box :log_transform, checked: is_need_prefill(f.object, :log_transform) ? prefill[:log_transform] : f.object.log_transform
-    = f.label :log_transform
+    = f.label :data_type
+    = f.select :data_type, enum_option_pairs(Experiment::Variable, :type, true),{ selected: object_value(f.object, :data_type, prefill) }, { class: 'u-full-width' }
+  - if is_need_prefill(f.object, :name) && prefill[:name] == t(:variable_error)
+    .field
+      .flex-row
+        = f.label :positive_value
+        span title=t(:positive_value_help) == material_icon.help_outline.md_18
+      = f.text_field :positive_value, class: 'u-full-width', value: object_value(f.object, :positive_value, prefill)
+  .field
+    = f.label :calculation_method
+    = f.select :calculation_method, enum_option_pairs(Experiment::Variable, :method, true), { selected: object_value(f.object, :calculation_method, prefill), prompt: t(:prompt_label), class: 'u-full-width'}
+
   = link_to_remove_association(f) do
     == material_icon.cancel.md_24

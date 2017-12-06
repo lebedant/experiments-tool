@@ -22,11 +22,6 @@ function drawHistogram(caption, data) {
       }]
     },
     options: {
-      title: {
-        display: true,
-        text: 'test',
-        position: 'bottom'
-      },
       responsive: true,
       maintainAspectRatio: false,
       scales: {
@@ -37,7 +32,6 @@ function drawHistogram(caption, data) {
               labelString: 'Frequency'
           },
           ticks: {
-            stepSize: 2,
             beginAtZero: true
           }
         }],
@@ -72,7 +66,6 @@ function drawBoxplot(data, name, max) {
               return `Mean: ${tooltipItem.yLabel}`;
             },
             afterLabel: function(tooltipItem, data) {
-              debugger;
               var str = "Upper: " + data.datasets[tooltipItem.datasetIndex].uppers[tooltipItem.index] + "\n";
               str += "Lower: " + data.datasets[tooltipItem.datasetIndex].lowers[tooltipItem.index];
               return str;

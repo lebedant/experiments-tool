@@ -24,7 +24,7 @@
 //= require jquery-ui/widgets/tooltip
 //= require popper
 //= require download
-//= require chart_with_error_bar
+//= require chart_error_bar
 
 
 /* Global toastr options */

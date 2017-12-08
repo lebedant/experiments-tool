@@ -1,6 +1,6 @@
 class Experiment::Variable < ApplicationRecord
   belongs_to :part, class_name: 'Experiment::Part'
-  has_many :values, class_name: 'Experiment::Datum'
+  has_many :values, class_name: 'Experiment::Datum', dependent: :destroy
 
   validates_presence_of :name, :data_type
   validates :name, uniqueness: { scope: :part, message: "should be unique in Part context." }
@@ -43,7 +43,7 @@ class Experiment::Variable < ApplicationRecord
   end
 
   def data
-    values.map { |value| value.target.value }
+    values.map { |value| { value: value.target.value, delete_reason: value.delete_reason } }
   end
 
 end

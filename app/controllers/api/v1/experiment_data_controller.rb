@@ -22,7 +22,8 @@ class Api::V1::ExperimentDataController < ActionController::API
     flat_json = {}
 
     variable_params.each do |variable_row|
-      variable = find_variable_by(variable_row[:name])
+      variable = find_variable_by(variable_row[:name]) or return
+
       recordClass = "#{variable.type}_datum".classify.constantize
       record = recordClass.create(value: variable_row[:value])
 
@@ -54,7 +55,7 @@ class Api::V1::ExperimentDataController < ActionController::API
     @current_part = Experiment::Part.find_by!(access_token: params[:part_id])
     @experiment = @current_part.experiment
   rescue ActiveRecord::RecordNotFound
-    send_json_status('Experiment part not found', 404)
+    return send_json_status('Experiment part not found', 404)
   end
 
   def find_variable_by(name)
@@ -63,7 +64,7 @@ class Api::V1::ExperimentDataController < ActionController::API
       part_id: @current_part.id
     )
   rescue ActiveRecord::RecordNotFound
-    send_json_status("Variable with name '#{name}' not found", 404)
+    send_json_status("Variable with name '#{name}' not found", 404) and return
   end
 
   def find_participant
@@ -74,12 +75,12 @@ class Api::V1::ExperimentDataController < ActionController::API
                    end
     @participant = Participant.find_by!(find_options)
   rescue ActiveRecord::RecordNotFound
-    send_json_status('Participant not found', 404)
+    return send_json_status('Participant not found', 404)
   end
 
   def check_state
     if @experiment.edit? || @experiment.closed?
-      send_json_status('Experiment is currently unavailable', 503)
+      return send_json_status('Experiment is currently unavailable', 503)
     end
   end
 
@@ -105,7 +106,7 @@ class Api::V1::ExperimentDataController < ActionController::API
     )
 
     if (existing_data.size >= @current_part.repetition_count)
-      send_json_status('Variable repetition count is exceeded', 422)
+      return send_json_status('Variable repetition count is exceeded', 422)
     end
   end
 

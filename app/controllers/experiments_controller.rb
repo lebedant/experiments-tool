@@ -349,13 +349,13 @@ class ExperimentsController < ApplicationController
           :id,
           :name,
           :description,
+          :repetition_count,
           :design,
           :_destroy,
           variables_attributes: [
             :id,
             :name,
             :data_type,
-            :repetition_count,
             :calculation_method,
             :positive_value,
             :_destroy

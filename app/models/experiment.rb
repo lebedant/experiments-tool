@@ -4,8 +4,8 @@ class Experiment < ApplicationRecord
   has_many :parts, class_name: 'Experiment::Part', dependent: :destroy, autosave: true
   has_many :data, through: :parts, source: :data
   has_many :variables, through: :parts
-  has_many :json_data, class_name: 'Experiment::JsonDatum'
-  has_many :chart_queries
+  has_many :json_data, class_name: 'Experiment::JsonDatum', dependent: :destroy
+  has_many :chart_queries, dependent: :destroy
   belongs_to :user
   # Recursive association for action "Copy"
   has_many :children, class_name: 'Experiment', foreign_key: "copy_parent_id"

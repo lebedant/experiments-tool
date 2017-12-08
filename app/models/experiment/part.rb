@@ -2,7 +2,7 @@ class Experiment::Part < ApplicationRecord
   belongs_to :experiment
   has_many :variables, class_name: 'Experiment::Variable', dependent: :destroy
   has_many :data, through: :variables, source: :values
-  has_many :json_data, class_name: 'Experiment::JsonDatum'
+  has_many :json_data, class_name: 'Experiment::JsonDatum', dependent: :destroy
 
   accepts_nested_attributes_for :variables, reject_if: :all_blank, allow_destroy: true
 
@@ -37,6 +37,7 @@ class Experiment::Part < ApplicationRecord
 
   def clear_data
     self.variables.each(&:clear_data)
+    self.json_data.delete_all
   end
 
   def as_json(options)

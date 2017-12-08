@@ -22,3 +22,19 @@
 [id $= '-options'] {
   display: none;
 }
+
+.boxplot {
+    margin-bottom: 25px;
+}
+
+
+table.row-header {
+    border: 1px solid #e1e1e1;
+}
+
+table.row-header th:first-child,
+table.row-header td:first-child, {
+    border-right: 1px solid #e1e1e1;
+    padding: 0px 8px;
+    font-weight: bold;
+}

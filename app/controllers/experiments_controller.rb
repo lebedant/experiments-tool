@@ -89,7 +89,6 @@ class ExperimentsController < ApplicationController
   # POST /experiments
   # POST /experiments.json
   def create
-    add_breadcrumb t(:new_experiment_breadcrumb), {}
     @experiment = Experiment.new(experiment_params)
     @experiment.user = current_user
 
@@ -231,10 +230,15 @@ class ExperimentsController < ApplicationController
         settings[:min] = params[:min].to_i if params[:min].present?
         settings[:max] = params[:max].to_i if params[:max].present?
         bar_count = params[:bar_count].to_i if params[:bar_count].present?
-
-        x,y = @raw_data.histogram(bar_count, settings)
-        x.map!{|item| item.round(3)}
-        pairs = x.zip(y)
+        begin
+          x,y = @raw_data.histogram(bar_count, settings)
+          x.map!{|item| item.round(3)}
+          pairs = x.zip(y)
+        rescue
+          # handle error
+          flash[:error] = 'Something was wrong...try again'
+          return redirect_to @experiment
+        end
       end
       # histogram plot
       @histogram_data = [variable.name]
@@ -311,7 +315,7 @@ class ExperimentsController < ApplicationController
         # calculate
         mean,upper,lower = calculator.mean_and_error
 
-        # pushh to result arrays
+        # push to result arrays
         means  << mean
         uppers << upper
         lowers << lower
@@ -325,7 +329,7 @@ class ExperimentsController < ApplicationController
     def check_state
       if !@experiment.edit?
         flash[:alert] = 'Editation is closed.'
-        redirect_to @experiment
+        redirect_to experiments_path
       end
     end
 
@@ -353,6 +357,7 @@ class ExperimentsController < ApplicationController
             :data_type,
             :repetition_count,
             :calculation_method,
+            :positive_value,
             :_destroy
           ]
         ]

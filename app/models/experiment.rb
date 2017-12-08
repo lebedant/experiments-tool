@@ -2,7 +2,6 @@ class Experiment < ApplicationRecord
   self.per_page = 10
 
   has_many :parts, class_name: 'Experiment::Part', dependent: :destroy, autosave: true
-  has_many :participants, dependent: :destroy
   has_many :data, through: :parts, source: :data
   has_many :variables, through: :parts
   has_many :json_data, class_name: 'Experiment::JsonDatum'

@@ -36,11 +36,7 @@ function drawHistogram(caption, data) {
           }
         }],
          xAxes: [{
-          display: true,
-          scaleLabel: {
-              display: false,
-              labelString: 'Time'
-          }
+          display: true
         }]
       }
     }

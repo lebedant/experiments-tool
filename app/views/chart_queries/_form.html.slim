@@ -25,9 +25,17 @@
   = submit_tag(t(:add_chart_query), name: nil, class: 'button-primary')
 
 javascript:
+  var target_var_select = $('#chart_query_target_variable');
   var filter_var_select = $('#chart_query_filter_variable');
 
-  function toggleOptions() {
+  //
+  target_var_select.on('change', function() {
+
+  });
+
+
+  //
+  function toggleFilterValues() {
     var name = filter_var_select.val();
     if (name != "") {
       $('.filter-values').show();
@@ -42,13 +50,13 @@ javascript:
     }
   }
 
-  filter_var_select.change(toggleOptions);
-  toggleOptions();
+  filter_var_select.change(toggleFilterValues);
+  toggleFilterValues();
 
+  // Button "add next value" for filter variable
   $('#add-values-btn').click(function(e) {
     var name = filter_var_select.val();
     var new_options = $(`#${name}-options`).clone();
-    // new_options.val("");
     $('#values').append(new_options);
     return false;
   });

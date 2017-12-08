@@ -11,7 +11,10 @@ class CiCalculator
 
     # if log => transform data
     @orig_data = data
-    @data = @data.select{|item| item > 0.0 }.map{|item| Math.log(item)} if @calculate_method == Experiment::Variable::LOG_TRANSFORM
+    # filter only values
+    @data = @data.select{ |item| item > 0.0 }
+    # transform data if "use log transform" selected
+    @data.map!{ |item| Math.log(item) } if log_transform?
   end
 
   def alpha
@@ -36,7 +39,7 @@ class CiCalculator
   end
 
   def standard_deviation
-    Math.sqrt(@data.map{ |el| (el - mean)**2 }.sum / n)
+    Math.sqrt(@data.map{ |el| (el - mean)**2 }.sum / (n-1))
   end
 
   def t_value
@@ -57,15 +60,28 @@ class CiCalculator
     n + z_value**2
   end
 
+  def log_transform?
+    @calculate_method == Experiment::Variable::LOG_TRANSFORM
+  end
+
+  def normal_dist?
+    @calculate_method == Experiment::Variable::NORMAL_DIST
+  end
+
+  def binomial_dist?
+    @calculate_method == Experiment::Variable::BINOMIAL_DIST
+  end
+
 
   def mean_and_error
     return [0.0, 0.0, 0.0] if @data.empty?
 
     # continious data
-    if @variable.double?
+    case @calculate_method
+    when Experiment::Variable::NORMAL_DIST, Experiment::Variable::LOG_TRANSFORM
       x = mean
       delta = t_value * (standard_deviation / Math.sqrt(n))
-    else
+    when Experiment::Variable::BINOMIAL_DIST
       x = adj_proportion
       delta = z_value * Math.sqrt((adj_proportion * (1 - adj_proportion))/adj_n)
     end
@@ -74,7 +90,7 @@ class CiCalculator
     lower = x - delta
 
     # if log transfor data back
-    if @calculate_method == Experiment::Variable::LOG_TRANSFORM
+    if log_transform?
       x = Math.exp(x)
       upper = Math.exp(upper)
       lower = Math.exp(lower)

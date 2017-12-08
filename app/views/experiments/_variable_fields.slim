@@ -5,12 +5,12 @@
   .field
     = f.label :data_type
     = f.select :data_type, enum_option_pairs(Experiment::Variable, :type, true),{ selected: object_value(f.object, :data_type, prefill) }, { class: 'u-full-width' }
-  - if is_need_prefill(f.object, :name) && prefill[:name] == t(:variable_error)
+  - if prefill[:name] == t(:variable_error) || f.object.positive_value.present?
     .field
       .flex-row
         = f.label :positive_value
         span title=t(:positive_value_help) == material_icon.help_outline.md_18
-      = f.text_field :positive_value, class: 'u-full-width', value: object_value(f.object, :positive_value, prefill)
+      = f.text_field :positive_value, class: 'u-full-width', value: object_value(f.object, :positive_value, prefill), required: true
   .field
     = f.label :calculation_method
     = f.select :calculation_method, enum_option_pairs(Experiment::Variable, :method, true), { selected: object_value(f.object, :calculation_method, prefill), prompt: t(:prompt_label), class: 'u-full-width'}

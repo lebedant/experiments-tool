@@ -237,6 +237,10 @@ ul.errors li {
     border-color: #ddd;
 }
 
+td.disabled a {
+    color: #ddd;
+}
+
 /* BOX */
 
 .box {

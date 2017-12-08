@@ -88,7 +88,7 @@ class Experiment < ApplicationRecord
           include: {
             variables: {
               only: [:name, :log_transform, :repetition_count],
-              methods: [:type, :data]
+              methods: [:type, :data_to_json]
             }
           }
         }

@@ -42,7 +42,14 @@ class Experiment::Variable < ApplicationRecord
     self.values.update_all(delete_reason: 'test')
   end
 
+  # we want to work only with ACTIVE data (without "delete_reason")
   def data
+    values.active.map { |value| value.target.value }
+  end
+
+  # helping function for JSON export
+  # we want to export ALL data values
+  def data_to_json
     values.map { |value| { value: value.target.value, delete_reason: value.delete_reason } }
   end
 

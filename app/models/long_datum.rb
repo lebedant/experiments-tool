@@ -1,3 +1,3 @@
 class LongDatum < ApplicationRecord
-  has_many :experiment_datum, as: :target
+  has_many :experiment_data, class_name: 'Experiment::Datum', as: :target
 end

@@ -311,7 +311,7 @@ class ExperimentsController < ApplicationController
         # type casting
         data_array = target_var.long? ? scope.map(&:to_i) : scope.map(&:to_f)
 
-        calculator = CiCalculator.new(data_array, target_var, calculate_method)
+        calculator = ::CiCalculator.new(data_array, target_var, calculate_method)
         # calculate
         mean,upper,lower = calculator.mean_and_error
 

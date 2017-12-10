@@ -32,8 +32,6 @@ gem 'jbuilder', '~> 2.5'
 # gem 'capistrano-rails', group: :development
 gem 'jquery-rails'
 
-gem 'rack-cors', require: 'rack/cors'
-
 # DB
 gem 'pg'
 

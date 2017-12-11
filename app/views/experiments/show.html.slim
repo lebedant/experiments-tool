@@ -28,7 +28,14 @@ h5 = t(:part_plural)
         p.small
           = part.description
         p
-          = "#{t(:variable_plural)}: [ #{part.variables_to_s} ]"
+          strong = t(:variable_plural)
+          = ": [ #{part.variables_to_s} ]"
+        p
+          strong = t(:design_type)
+          = ": #{te(part, :design)}"
+        p
+          strong = t(:repetition_count)
+          = ": #{part.repetition_count}"
       .card-footer
         label = t(:access_token)
         input.u-full-width type="text" value=part.access_token readonly="true"

@@ -81,6 +81,8 @@ en:
   raw_data: Raw data
   total_count: Total count
   ci_table: CI table
+  design_type: Design type
+  repetition_count: Repetition count
 
   access_token: Access token
   label_new_experiment: New experiment

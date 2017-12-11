@@ -1,7 +1,7 @@
 class Api::V1::ExperimentDataController < ActionController::API
   respond_to :json
   before_action :ensure_json_request
-  before_action :set_cors_headers
+  # before_action :set_cors_headers
   before_action :find_participant, :find_experiment, :check_state, :check_params, :check_repetition_count, only: :create
 
 
@@ -47,6 +47,10 @@ class Api::V1::ExperimentDataController < ActionController::API
 
     send_json_status('Ok', 200)
   end
+
+  # def cors_preflight
+  #   render(nothing: :true) and return
+  # end
 
 
   private

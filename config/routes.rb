@@ -23,6 +23,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       post '/register_participant', to: 'experiment_data#register_participant', as: 'api_registration'
       post '/save_data', to: 'experiment_data#create', as: 'api_test_data'
+      # match '/save_data' => 'experiment_data#cors_preflight', via: [:options]
     end
   end
 end

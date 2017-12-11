@@ -109,7 +109,10 @@ en:
   positive_value_help: 'For correct calculations, we need to know what value you consider as positive.'
 
   edit_description: In this mode You are able to edit experiment definition (add/remove parts/variables. change names etc.)
-  experiment_description: 'In this mode experiment is open to collect data, so You can experiment that all works as You expect. '
+  test_description: "This mode allows You to test that all works as You expected. Server is open to receive participant's data, but also it's possible to return back to Edit mode. IMPORTANT! All the data will be exclude from the calculations, but You still can find them in export file."
+  open_description: "Almost the same mode as 'Debug': server is open to receive participant's data but You can't return back and edit Your experiment definition."
+  closed_description: "In this mode server is closed and do not receive participant's data."
+
   #####################################
   #         STATE TRANSITIONS         #
   #####################################

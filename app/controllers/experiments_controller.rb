@@ -1,7 +1,7 @@
 require 'histogram/array'
 
 class ExperimentsController < ApplicationController
-  allowed_ghost_actions [:to_test, :to_edit, :to_open, :to_closed]
+  allowed_ghost_actions [:to_debug, :to_edit, :to_open, :to_closed]
   before_action :set_experiment, except: [:new, :create, :index]
   before_action :check_state, only: [:edit, :update]
   add_breadcrumb I18n.t(:experiment_plural), :experiments_path
@@ -186,15 +186,6 @@ class ExperimentsController < ApplicationController
     super
   end
 
-  def to_experiment
-    if @experiment.to_experiment
-      flash[:notice] = 'Experiment state was successfully changed.'
-    else
-      flash[:alert] = 'Invalid experiment state transition.'
-    end
-    redirect_to @experiment
-  end
-
   private
 
     def prepare_boxplot_form
@@ -254,7 +245,7 @@ class ExperimentsController < ApplicationController
 
       return if x_labels.empty?
 
-      raw_data = []
+      raw_data = {}
 
       # labels from filter_variable
       boxplot_data = { labels: x_labels, datasets: [] }
@@ -264,7 +255,7 @@ class ExperimentsController < ApplicationController
       @experiment.parts.each do |part|
         next unless part.variables.pluck(:name).include? target_var.name
 
-        means,uppers,lowers = calculate_means_for(
+        means,uppers,lowers,medians,orig_means = calculate_means_for(
                                                    part,
                                                    target_var,
                                                    filter_var,
@@ -285,12 +276,23 @@ class ExperimentsController < ApplicationController
                           }
         i += 1
 
-        tmp_ar = []
+        raw_data[part.name] = []
+
+        # tmp_ar = []
+        # means.size.times do |ind|
+        #   tmp_ar << "#{means[ind]}(#{lowers[ind]}, #{uppers[ind]})"
+        # end
+
         means.size.times do |ind|
-          tmp_ar << "#{means[ind]}(#{lowers[ind]}, #{uppers[ind]})"
+          raw_data[part.name] << {
+            geo_mean: means[ind],
+            lower: lowers[ind],
+            upper: uppers[ind],
+            median: medians[ind],
+            orig_mean: orig_means[ind]
+          }
         end
 
-        raw_data << [part.name, tmp_ar].flatten
       end
 
       [boxplot_data, raw_data, x_labels]
@@ -298,8 +300,10 @@ class ExperimentsController < ApplicationController
 
     def calculate_means_for(part, target_var, filter_var, filter_var_values, calculate_method)
       means = []
+      orig_means = []
       uppers = []
       lowers = []
+      medians = []
 
       filter_var_values.each do |value|
         next if value.empty?
@@ -308,27 +312,32 @@ class ExperimentsController < ApplicationController
         scope = scope.where("data ->> '#{filter_var.name}' = ?", value.to_s) unless value == "all"
         scope = scope.pluck("data -> '#{target_var.name}'")
 
+        next if scope.empty?
+
         # type casting
         data_array = target_var.long? ? scope.map(&:to_i) : scope.map(&:to_f)
 
+
         calculator = ::CiCalculator.new(data_array, target_var, calculate_method)
         # calculate
-        mean,upper,lower = calculator.mean_and_error
+        mean, upper, lower = calculator.mean_and_error
 
         # push to result arrays
         means  << mean
         uppers << upper
         lowers << lower
+        medians << calculator.median
+        orig_means << calculator.orig_mean
       end
       # return multiple values
-      [means, uppers, lowers]
+      [means, uppers, lowers, medians, orig_means]
     end
 
     # ----------------------------------------
 
     def check_state
       if !@experiment.edit?
-        flash[:alert] = 'Editation is closed.'
+        flash[:alert] = 'Sorry, editation is closed.'
         redirect_to experiments_path
       end
     end

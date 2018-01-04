@@ -275,11 +275,11 @@ td.disabled a {
 }
 
 #timeline ul li a:hover {
-    background: #52adea;
+    background: #7acaff;
 }
 
 #timeline > ul li a:hover:after {
-    border-left: 20px solid #52adea;
+    border-left: 20px solid #7acaff;
 }
 
 #timeline ul li a.disabled {

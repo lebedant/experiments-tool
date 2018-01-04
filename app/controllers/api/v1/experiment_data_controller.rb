@@ -59,7 +59,7 @@ class Api::V1::ExperimentDataController < ActionController::API
     @current_part = Experiment::Part.find_by!(access_token: params[:part_id])
     @experiment = @current_part.experiment
   rescue ActiveRecord::RecordNotFound
-    return send_json_status('Experiment part not found', 404)
+    return send_json_status("Experiment's part not found", 404)
   end
 
   def find_variable_by(name)
@@ -84,18 +84,22 @@ class Api::V1::ExperimentDataController < ActionController::API
 
   def check_state
     if @experiment.edit? || @experiment.closed?
-      return send_json_status('Experiment is currently unavailable', 503)
+      return send_json_status('Experiment is currently unavailable', 403)
     end
   end
 
   def check_params
-    # check existance
+    # check existance of participant
+    if !params[:internal_id] || !params[:external_id]
+      return send_json_status('internal_id or external_id are missing', 422)
+    end
+    # check existance of values
     if !params[:variable_values]
       return send_json_status('variable_values are missing', 422)
     end
     # check type (must be Hash structure)
     unless variable_params.is_a? Array
-      return send_json_status('variable_values must be Array', 422)
+      return send_json_status('variable_values must be an Array', 422)
     end
     # cjeck Hash size
     if variable_params.size != @current_part.variables.count

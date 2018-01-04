@@ -2,19 +2,25 @@ class CiCalculator
   attr_reader :data, :variable, :confidence_level, :orig_data
 
 
-  def initialize(data, variable, calculate_method, precision = 3, confidence_level = 0.95)
+  def initialize(data, variable, calculate_method, precision = 2, confidence_level = 0.95)
     @data = data
     @variable = variable
     @confidence_level = confidence_level
     @precision = precision
     @calculate_method = calculate_method.to_i
 
-    # if log => transform data
+    # save original data (then we will work with modified @data variable)
     @orig_data = data
-    # filter only values
+
+    # filter only non zero values
     @data = @data.select{ |item| item > 0.0 }
+
     # transform data if "use log transform" selected
     @data.map!{ |item| Math.log(item) } if log_transform?
+
+
+    # round values
+    @data = @data.map{ |item| item.round(precision) }
   end
 
   def alpha
@@ -27,7 +33,11 @@ class CiCalculator
   end
 
   def mean
-    @mean ||= @data.sum / n
+    @mean ||= (@data.sum / n).round(@precision)
+  end
+
+  def orig_mean
+    (@orig_data.sum / n).round(@precision)
   end
 
   def positive_count
@@ -72,6 +82,21 @@ class CiCalculator
     @calculate_method == Experiment::Variable::BINOMIAL_DIST
   end
 
+  def margin_of_error
+    t_value * standard_error
+  end
+
+  def standard_error
+    standard_deviation / Math.sqrt(n)
+  end
+
+  def median
+    middle_ind = n/2
+    sorted = @orig_data.sort
+    res = sorted[middle_ind-1]
+    res = (res + sorted[middle_ind])/2 if n.to_i.even?
+    res.round(@precision)
+  end
 
   def mean_and_error
     return [0.0, 0.0, 0.0] if @data.empty?
@@ -80,7 +105,7 @@ class CiCalculator
     case @calculate_method
     when Experiment::Variable::NORMAL_DIST, Experiment::Variable::LOG_TRANSFORM
       x = mean
-      delta = t_value * (standard_deviation / Math.sqrt(n))
+      delta = t_value * standard_error
     when Experiment::Variable::BINOMIAL_DIST
       x = adj_proportion
       delta = z_value * Math.sqrt((adj_proportion * (1 - adj_proportion))/adj_n)

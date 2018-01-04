@@ -38,28 +38,24 @@ class Experiment < ApplicationRecord
     })
   end
 
-  ALL_EVENTS = [:edit, :test, :open, :closed]
+  ALL_EVENTS = [:edit, :debug, :open, :closed]
 
   # Define states transitions
   state_machine :state, initial: :edit do
-    event :to_test do
-      transition :edit => :test
+    event :to_debug do
+      transition edit: :debug
     end
 
     event :to_edit do
-      transition :test => :edit
+      transition debug: :edit
     end
 
     event :to_open do
-      transition :test => :open
+      transition debug: :open
     end
 
     event :to_closed do
-      transition :open => :closed
-    end
-
-    state :first_gear, :second_gear do
-      validates_presence_of :seatbelt_on
+      transition open: :closed
     end
 
     after_transition on: :to_edit, do: :clear_data

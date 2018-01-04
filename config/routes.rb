@@ -4,14 +4,12 @@ Rails.application.routes.draw do
 
   root to: "home#index"
 
-  resources :experiment_variables
-  resources :experiment_parts
   resources :chart_queries, only: [:create, :destroy]
 
   resources :experiments do
     member do
       get 'copy'
-      get 'to_test'
+      get 'to_debug'
       get 'to_edit'
       get 'to_open'
       get 'to_closed'
@@ -23,7 +21,6 @@ Rails.application.routes.draw do
     namespace :v1 do
       post '/register_participant', to: 'experiment_data#register_participant', as: 'api_registration'
       post '/save_data', to: 'experiment_data#create', as: 'api_test_data'
-      # match '/save_data' => 'experiment_data#cors_preflight', via: [:options]
     end
   end
 end

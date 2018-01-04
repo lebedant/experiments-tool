@@ -33,7 +33,7 @@ table.row-header {
 }
 
 table.row-header th:first-child,
-table.row-header td:first-child, {
+table.row-header td.header, {
     border-right: 1px solid #e1e1e1;
     padding: 0px 8px;
     font-weight: bold;

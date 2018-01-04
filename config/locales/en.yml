@@ -84,6 +84,12 @@ en:
   design_type: Design type
   repetition_count: Repetition count
 
+  orig_mean: Arithmetic mean
+  geo_mean: Geometric mean
+  from: From
+  to: To
+  median: Median
+
   access_token: Access token
   label_new_experiment: New experiment
   add_part: Add next part
@@ -108,10 +114,10 @@ en:
   edit_title: Edit experiment
   delete_title: Delete experiment permanently
 
-  positive_value_help: 'For correct calculations, we need to know what value you consider as positive.'
+  positive_value_help: 'For correct calculations, we need to know what value You consider as positive.'
 
-  edit_description: In this mode You are able to edit experiment definition (add/remove parts/variables. change names etc.)
-  test_description: "This mode allows You to test that all works as You expected. Server is open to receive participant's data, but also it's possible to return back to Edit mode. IMPORTANT! All the data will be exclude from the calculations, but You still can find them in export file."
+  edit_description: "In this mode You will be able to edit the experiment definition (add/remove parts/variables, change names etc.)"
+  debug_description: "This mode allows You to test that everything works as You expect. The server is open to receive participant's data, but also it's possible to return back to 'Edit' mode. IMPORTANT! All the data will be excluded from calculations, but You still can find it in the export file."
   open_description: "Almost the same mode as 'Debug': server is open to receive participant's data but You can't return back and edit Your experiment definition."
   closed_description: "In this mode server is closed and do not receive participant's data."
 
@@ -119,7 +125,7 @@ en:
   #         STATE TRANSITIONS         #
   #####################################
   to_edit: Edit
-  to_test: Debug
+  to_debug: Debug
   to_open: Open
   to_closed: Closed
 

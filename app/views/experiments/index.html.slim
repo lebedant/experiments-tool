@@ -16,7 +16,7 @@
         - @experiments.each do |experiment|
           tr
             td = experiment.name
-            td.text-center = "[ #{experiment.state.upcase} ]"
+            td.text-center = "#{experiment.state.upcase}"
             td.text-center = link_to material_icon.visibility.md_24, experiment
             td.text-center class=('disabled' unless experiment.edit?)
               = link_to material_icon.edit.md_24, edit_experiment_path(experiment)

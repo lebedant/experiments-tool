@@ -121,21 +121,30 @@ h5 = t(:values)
 
       button id="data-toggle-for-#{boxplot[:name_code]}" = t(:ci_table)
       div id="raw-data-for-#{boxplot[:name_code]}" style="display: none;"
+        - labels = [:orig_mean, :lower, :upper, :median]
         table.u-full-width.row-header
           tr
+            th
             th
             - boxplot[:header_row].each do |header|
               th = header
 
-          - boxplot[:raw_data].each do |row|
+          - boxplot[:raw_data].each do |name, row|
             tr
+              td.header(rowspan=labels.size+1) = name
+              td.header = t(:geo_mean)
               - row.each do |item|
-                td = item
+                td = item[:geo_mean]
+
+            - labels.each do |label|
+              tr
+                td.header = t(label)
+                - row.each do |item|
+                  td = item[label]
 
       javascript:
         var boxplotData = #{{ JSON.dump(boxplot[:data]) }};
         drawBoxplot(boxplotData, "#{boxplot[:name_code]}", #{boxplot[:max]});
-
 
 - else
   p.no-content No data.

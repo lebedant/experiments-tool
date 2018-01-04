@@ -48,7 +48,9 @@ toastr.options = {
 
 $( function() {
   // init jQueryUI tooltips
-  $( document ).tooltip();
+  $( document ).tooltip({
+    position: { my: "left top+2", at: "left bottom" }
+  });
 
   // init Bootstrap popovers
   $('[data-toggle="popover"]').popover({

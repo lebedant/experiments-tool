@@ -1,8 +1,10 @@
 class CiCalculator
   attr_reader :data, :variable, :confidence_level, :orig_data
 
+  INNER_ROUND = 4
 
-  def initialize(data, variable, calculate_method, precision = 2, confidence_level = 0.95)
+
+  def initialize(data, variable, calculate_method, precision = 3, confidence_level = 0.95)
     @data = data
     @variable = variable
     @confidence_level = confidence_level
@@ -20,7 +22,7 @@ class CiCalculator
 
 
     # round values
-    @data = @data.map{ |item| item.round(precision) }
+    @data = @data.map{ |item| item.round(INNER_ROUND) }
   end
 
   def alpha
@@ -33,7 +35,7 @@ class CiCalculator
   end
 
   def mean
-    @mean ||= (@data.sum / n).round(@precision)
+    @mean ||= (@data.sum / n).round(INNER_ROUND)
   end
 
   def orig_mean
@@ -105,14 +107,14 @@ class CiCalculator
     case @calculate_method
     when Experiment::Variable::NORMAL_DIST, Experiment::Variable::LOG_TRANSFORM
       x = mean
-      delta = t_value * standard_error
+      delta = margin_of_error
     when Experiment::Variable::BINOMIAL_DIST
       x = adj_proportion
       delta = z_value * Math.sqrt((adj_proportion * (1 - adj_proportion))/adj_n)
     end
 
-    upper = x + delta
-    lower = x - delta
+    upper = x + delta.round(INNER_ROUND)
+    lower = x - delta.round(INNER_ROUND)
 
     # if log transfor data back
     if log_transform?

@@ -121,7 +121,7 @@ h5 = t(:values)
 
       button id="data-toggle-for-#{boxplot[:name_code]}" = t(:ci_table)
       div id="raw-data-for-#{boxplot[:name_code]}" style="display: none;"
-        - labels = [:orig_mean, :from, :to, :median]
+        - labels = [:orig_mean, :lower, :upper, :median]
         table.u-full-width.row-header
           tr
             th.header

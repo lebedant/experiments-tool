@@ -1,7 +1,7 @@
 class CiCalculator
   attr_reader :data, :variable, :confidence_level, :orig_data
 
-  INNER_ROUND = 4
+  INNER_ROUND = 6
 
 
   def initialize(data, variable, calculate_method, precision = 3, confidence_level = 0.95)

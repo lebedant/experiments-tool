@@ -32,7 +32,11 @@ table.row-header {
     border: 1px solid #e1e1e1;
 }
 
-table.row-header th:first-child,
+table.row-header td[rowspan] {
+    text-align: center;
+}
+
+table.row-header th.header,
 table.row-header td.header, {
     border-right: 1px solid #e1e1e1;
     padding: 0px 8px;

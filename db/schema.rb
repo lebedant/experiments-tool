@@ -10,14 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171204190609) do
+ActiveRecord::Schema.define(version: 20180104151222) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "chart_queries", force: :cascade do |t|
     t.string "name"
-    t.jsonb "params"
+    t.json "params"
     t.bigint "experiment_id"
     t.index ["experiment_id"], name: "index_chart_queries_on_experiment_id"
   end
@@ -41,7 +41,7 @@ ActiveRecord::Schema.define(version: 20171204190609) do
   create_table "experiment_json_data", force: :cascade do |t|
     t.bigint "part_id"
     t.bigint "experiment_id"
-    t.jsonb "data"
+    t.json "data"
     t.bigint "participant_id"
     t.index ["experiment_id"], name: "index_experiment_json_data_on_experiment_id"
     t.index ["part_id"], name: "index_experiment_json_data_on_part_id"
@@ -67,7 +67,7 @@ ActiveRecord::Schema.define(version: 20171204190609) do
     t.bigint "part_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "positive_value", default: 0
+    t.integer "positive_value"
     t.integer "calculation_method"
     t.index ["part_id"], name: "index_experiment_variables_on_part_id"
   end

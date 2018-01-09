@@ -90,7 +90,7 @@ class Api::V1::ExperimentDataController < ActionController::API
 
   def check_params
     # check existance of participant
-    if !params[:internal_id] || !params[:external_id]
+    if !params[:internal_id] && !params[:external_id]
       return send_json_status('internal_id or external_id are missing', 422)
     end
     # check existance of values

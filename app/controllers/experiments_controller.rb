@@ -216,7 +216,7 @@ class ExperimentsController < ApplicationController
         pairs = @raw_data.group_by(&:itself).map { |k,v| [k, v.count] }.to_h
       else
         @raw_data = variable.long? ? variable.data.map(&:to_i) : variable.data.map(&:to_f)
-        settings = {}
+        settings = { bin_boundary: :min }
         settings[:bin_width] = params[:step_size].to_i if params[:step_size].present?
         settings[:min] = params[:min].to_i if params[:min].present?
         settings[:max] = params[:max].to_i if params[:max].present?

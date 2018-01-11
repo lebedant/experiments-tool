@@ -1,7 +1,19 @@
-h3 Home page.
-p Lorem ipsum dolor sit amet, consectetuer adipiscing elit. In sem justo, commodo ut, suscipit at, pharetra vitae, orci. Et harum quidem rerum facilis est et expedita distinctio. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Nullam at arcu a est sollicitudin euismod. Aliquam erat volutpat. Etiam commodo dui eget wisi. Mauris suscipit, ligula sit amet pharetra semper, nibh ante cursus purus, vel sagittis velit mauris vel metus. Phasellus rhoncus. Donec quis nibh at felis congue commodo. Maecenas libero.
+h3 Welcome!
 
-p Donec ipsum massa, ullamcorper in, auctor et, scelerisque sed, est. Nullam feugiat, turpis at pulvinar vulputate, erat libero tristique tellus, nec bibendum odio risus sit amet ante. Mauris metus. Nullam feugiat, turpis at pulvinar vulputate, erat libero tristique tellus, nec bibendum odio risus sit amet ante. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Vivamus ac leo pretium faucibus. Fusce nibh. Aenean placerat. Etiam bibendum elit eget erat. Mauris dictum facilisis augue.
+p.info-text
+  | This is a web service that allows You to
+  strong  manage
+  |  user experiments,
+  strong  collect
+  |,
+  strong  store
+  |  as well as
+  strong  analyze
+  |  and
+  strong  visualize
+  |  the collected data.
+
+
 
 - if user_signed_in?
-    = link_to 'Create test', new_experiment_path, class: 'button button-primary'
+    = link_to t(:label_new_experiment), new_experiment_path, class: 'button button-primary'
